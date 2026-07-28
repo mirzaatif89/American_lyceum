@@ -29,8 +29,8 @@ async function getJson(endpoint, fallback) {
 }
 
 function renderContact() {
-    setText('headerAddress', 'Dakhni Road Jand');
-    setText('contactAddress', 'Main Campus, Dakhni Road Jand');
+    setText('headerAddress', 'Main tehsil Road near post office Sharaqpur Sharif district sheikhupura');
+    setText('contactAddress', 'Main Campus, Main tehsil Road near post office Sharaqpur Sharif district sheikhupura');
 }
 
 function renderBanners() {
@@ -63,7 +63,7 @@ function renderBanners() {
             <article class="website-banner-slide${index === activeBannerIndex ? ' active' : ''}" data-banner-slide="${index}">
                 ${media}
                 <div class="website-banner-caption">
-                    <h2>${escapeHtml(text(banner.title, 'Myownschool School'))}</h2>
+                    <h2>${escapeHtml(text(banner.title, 'American Lyceum School'))}</h2>
                     ${text(banner.subtitle, '') ? `<p>${escapeHtml(banner.subtitle)}</p>` : ''}
                 </div>
             </article>

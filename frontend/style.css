@@ -156,7 +156,7 @@ ul {
 }
 
 .login-icon-circle::after {
-    content: "MyOwn School\A Jand";
+    content: "American Lyceum\A Jand";
     white-space: pre-line;
     color: #ffffff;
     font-size: 1.16rem;
@@ -450,7 +450,7 @@ ul {
 }
 
 .sidebar .logo-section::after {
-    content: "MyOwn School\A Jand";
+    content: "American Lyceum\A Jand";
     color: #ffffff;
     font-size: 0.9rem;
     font-weight: 800;

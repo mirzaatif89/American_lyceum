@@ -1,13 +1,13 @@
 # Mobile App Developer API Guide
 
-This guide is for the external mobile app developer building the Student Portal and Teacher Portal apps for My Own School Jand. Build the app separately and connect it to this backend API.
+This guide is for the external mobile app developer building the Student Portal and Teacher Portal apps for American Lyceum. Build the app separately and connect it to this backend API.
 
 ## Base URL
 
 Live server:
 
 ```text
-https://myownschooljand.com/api
+https://YOUR-DOMAIN.com/api
 ```
 
 Local testing:
@@ -126,9 +126,9 @@ Response:
 ```json
 {
   "success": true,
-  "url": "https://myownschooljand.com/uploads/mobile/assignment/FILE_NAME.pdf",
+  "url": "https://YOUR-DOMAIN.com/uploads/mobile/assignment/FILE_NAME.pdf",
   "file": {
-    "url": "https://myownschooljand.com/uploads/mobile/assignment/FILE_NAME.pdf",
+    "url": "https://YOUR-DOMAIN.com/uploads/mobile/assignment/FILE_NAME.pdf",
     "relativeUrl": "/uploads/mobile/assignment/FILE_NAME.pdf",
     "fileName": "FILE_NAME.pdf",
     "originalName": "homework.pdf",
@@ -363,7 +363,7 @@ File upload with returned URL inside assignment:
   "studentId": "STU-001",
   "assignmentTitle": "Science Homework",
   "subject": "Science",
-  "fileUrl": "https://myownschooljand.com/uploads/mobile/assignment/homework.pdf",
+  "fileUrl": "https://YOUR-DOMAIN.com/uploads/mobile/assignment/homework.pdf",
   "note": "Submitted from mobile app"
 }
 ```
@@ -376,7 +376,7 @@ Profile picture update after upload:
   "fullName": "Student Name",
   "username": "student_username",
   "password": "student_password",
-  "profileImage": "https://myownschooljand.com/uploads/mobile/profile/student-photo.jpg"
+  "profileImage": "https://YOUR-DOMAIN.com/uploads/mobile/profile/student-photo.jpg"
 }
 ```
 
@@ -421,7 +421,7 @@ POST requests return the saved record plus the updated list:
 
 ## Important Notes
 
-- Use `https://myownschooljand.com/api` as the app base URL after deployment.
+- Use `https://YOUR-DOMAIN.com/api` as the app base URL after deployment.
 - Do not use browser `localStorage` data in the mobile app. Use these APIs.
 - Core records such as students, teachers, fees, attendance, messages, and notices are served by backend routes.
 - Mobile support modules such as results, syllabus, uploaded lectures, quizzes, leave requests, complaints, assigned classes, and about software persist under `data/mobile_api_store`.

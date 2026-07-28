@@ -3,12 +3,13 @@ const { readStore, upsertRecord } = require('../_lib/mobileStore');
 
 const defaultAboutSoftware = {
     id: 'ABOUT-SOFTWARE',
-    appName: 'My Own School Jand',
-    schoolName: 'My Own School Jand',
-    website: 'https://myownschooljand.com/',
+    appName: 'American Lyceum',
+    schoolName: 'American Lyceum',
+    website: 'https://YOUR-DOMAIN.com/',
     supportEmail: '',
-    supportPhone: '',
-    description: 'Student and teacher portal APIs for My Own School Jand.',
+    supportPhone: '03174944258',
+    schoolAddress: 'Main tehsil Road near post office Sharaqpur Sharif district sheikhupura',
+    description: 'Student and teacher portal APIs for American Lyceum.',
     version: '1.0.0'
 };
 

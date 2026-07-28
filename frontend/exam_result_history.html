@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Result History - Apexiums School</title>
+    <title>Result History - American Lyceum</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -16,7 +16,7 @@
             <div class="logo-section">
                 <i data-lucide="graduation-cap" style="font-size: 2.5rem; margin-bottom: 0.5rem;"></i>
                 <div style="display: flex; flex-direction: column; align-items: center; gap: 0;">
-                    <span style="font-size: 1rem; line-height: 1.2;">Apexiums School</span>
+                    <span style="font-size: 1rem; line-height: 1.2;">American Lyceum</span>
                     <span style="font-size: 1rem; line-height: 1.2;">System</span>
                 </div>
             </div>
@@ -154,7 +154,7 @@
                             <div class="result-form-section">
                                 <h4>Date Sheet Header</h4>
                                 <div class="result-form-fields">
-                                    <label>School Name<input type="text" id="dateSheetSchoolName" value="Apexiums School"></label>
+                                    <label>School Name<input type="text" id="dateSheetSchoolName" value="American Lyceum"></label>
                                     <label>Exam Title<input type="text" id="dateSheetExamTitle" value="Mid Term Examination 2026"></label>
                                     <label>Session<input type="text" id="dateSheetSession" value="2025-26"></label>
                                     <label>Target Class / Group<input type="text" id="dateSheetClassGroup" value="Grade 5 / Section A"></label>
@@ -196,7 +196,7 @@
                                     <div class="date-sheet-header-top">
                                         <img class="date-sheet-logo" src="images/logo.jpeg" alt="School logo">
                                         <div>
-                                            <h2 id="previewDateSheetSchoolName">Apexiums School</h2>
+                                            <h2 id="previewDateSheetSchoolName">American Lyceum</h2>
                                             <p id="previewDateSheetCampus">Main Campus</p>
                                         </div>
                                         <img class="date-sheet-logo" src="images/logo.jpeg" alt="School logo">
@@ -256,9 +256,9 @@
                         <div class="result-form-section">
                             <h4>School Header</h4>
                             <div class="result-form-fields">
-                                <label>School Name<input type="text" id="schoolName" value="Apexiums School"></label>
+                                <label>School Name<input type="text" id="schoolName" value="American Lyceum"></label>
                                 <label>Campus / Branch<input type="text" id="campusName" value="Main branch"></label>
-                                <label>Contact Line<input type="text" id="schoolContact" value="Address: Dekhni Road Jand | Phone: 03045259900"></label>
+                                <label>Contact Line<input type="text" id="schoolContact" value="Address: Main tehsil Road near post office Sharaqpur Sharif district sheikhupura | Phone: 03174944258"></label>
                                 <label>Term Title<input type="text" id="termTitle" value="3rd Term 2025-26"></label>
                                 <label>Left Logo URL<input type="text" id="leftLogoUrl" value="images/logo.jpeg" placeholder="images/logo.jpeg"></label>
                                 <label>Right Logo URL<input type="text" id="rightLogoUrl" value="images/logo.jpeg" placeholder="images/logo.jpeg"></label>
@@ -332,9 +332,9 @@
                             <div class="result-card-topbar">
                                 <div class="result-logo-box"><img id="previewLeftLogo" alt="Left school logo"></div>
                                 <div class="result-school-center">
-                                    <h2 id="previewSchoolName">Apexiums School</h2>
+                                    <h2 id="previewSchoolName">American Lyceum</h2>
                                     <p id="previewCampusName">Main branch</p>
-                                    <p id="previewSchoolContact">Address: Dekhni Road Jand | Phone: 03045259900</p>
+                                    <p id="previewSchoolContact">Address: Main tehsil Road near post office Sharaqpur Sharif district sheikhupura | Phone: 03174944258</p>
                                 </div>
                                 <div class="result-logo-box"><img id="previewRightLogo" alt="Right school logo"></div>
                             </div>
@@ -1716,7 +1716,7 @@
 
         function refreshDateSheetPreview() {
             const rows = readScheduleRows();
-            document.getElementById('previewDateSheetSchoolName').textContent = document.getElementById('dateSheetSchoolName').value || 'Apexiums School';
+            document.getElementById('previewDateSheetSchoolName').textContent = document.getElementById('dateSheetSchoolName').value || 'American Lyceum';
             document.getElementById('previewDateSheetExamTitle').textContent = document.getElementById('dateSheetExamTitle').value || 'Exam Title';
             document.getElementById('previewDateSheetSession').textContent = document.getElementById('dateSheetSession').value || '-';
             document.getElementById('previewDateSheetClassGroup').textContent = document.getElementById('dateSheetClassGroup').value || '-';
@@ -2007,15 +2007,15 @@
         const RESULT_BRANCH_CONTACTS = {
             main: {
                 campusLabel: 'Main branch',
-                contactLine: 'Address: Dekhni Road Jand | Phone: 03045259900'
+                contactLine: 'Address: Main tehsil Road near post office Sharaqpur Sharif district sheikhupura | Phone: 03174944258'
             },
             ali: {
                 campusLabel: 'Ali campus',
-                contactLine: 'Address: Chapri Road Jand | Phone: 03085259900'
+                contactLine: 'Address: Main tehsil Road near post office Sharaqpur Sharif district sheikhupura | Phone: 03174944258'
             },
             fatima: {
                 campusLabel: 'Fatima campus',
-                contactLine: 'Address: Nai Abadi | Phone: 03085259900'
+                contactLine: 'Address: Main tehsil Road near post office Sharaqpur Sharif district sheikhupura | Phone: 03174944258'
             }
         };
 
@@ -2103,7 +2103,7 @@
             const subjects = readSubjectRows();
             const behaviors = readBehaviorRows();
 
-            document.getElementById('previewSchoolName').textContent = document.getElementById('schoolName').value || 'Apexiums School';
+            document.getElementById('previewSchoolName').textContent = document.getElementById('schoolName').value || 'American Lyceum';
             document.getElementById('previewCampusName').textContent = document.getElementById('campusName').value || '';
             document.getElementById('previewSchoolContact').textContent = document.getElementById('schoolContact').value || '';
             document.getElementById('previewTermTitle').textContent = document.getElementById('termTitle').value || 'Term';

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fee Challan Generator - My own Science school</title>
+    <title>Fee Challan Generator - American Lyceum</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -1125,7 +1125,7 @@
             <div class="logo-section">
                 <i data-lucide="graduation-cap" style="font-size: 2.5rem; margin-bottom: 0.5rem;"></i>
                 <div style="display: flex; flex-direction: column; align-items: center; gap: 0;">
-                    <span style="font-size: 1rem; line-height: 1.2;">Apexiums School</span>
+                    <span style="font-size: 1rem; line-height: 1.2;">American Lyceum</span>
                     <span style="font-size: 1rem; line-height: 1.2;">System</span>
                 </div>
             </div>
@@ -1299,11 +1299,11 @@
                                 </div>
                                 <div class="field-block">
                                     <label for="schoolName">School Name</label>
-                                    <input type="text" id="schoolName" placeholder="My own Science school">
+                                    <input type="text" id="schoolName" placeholder="American Lyceum">
                                 </div>
                                 <div class="field-block full">
                                     <label for="schoolAddress">Address / Campus</label>
-                                    <input type="text" id="schoolAddress" placeholder="Main branch - Address: Dekhni Road Jand. Phone: 03045259900">
+                                    <input type="text" id="schoolAddress" placeholder="Main branch - Address: Main tehsil Road near post office Sharaqpur Sharif district sheikhupura. Phone: 03174944258">
                                 </div>
                                 <div class="field-block full">
                                     <label for="urduNote">Important Note</label>
@@ -1430,15 +1430,15 @@
         const CHALLAN_BRANCH_CONTACTS = {
             main: {
                 campusLabel: 'Main branch',
-                addressLine: 'Address: Dekhni Road Jand. Phone: 03045259900'
+                addressLine: 'Address: Main tehsil Road near post office Sharaqpur Sharif district sheikhupura. Phone: 03174944258'
             },
             ali: {
                 campusLabel: 'Ali campus',
-                addressLine: 'Address: Chapri Road Jand. Phone: 03085259900'
+                addressLine: 'Address: Main tehsil Road near post office Sharaqpur Sharif district sheikhupura. Phone: 03174944258'
             },
             fatima: {
                 campusLabel: 'Fatima campus',
-                addressLine: 'Address: Nai Abadi. Phone: 03085259900'
+                addressLine: 'Address: Main tehsil Road near post office Sharaqpur Sharif district sheikhupura. Phone: 03174944258'
             }
         };
         const challanFormFields = ['challanNumber', 'challanStudent', 'studentSid', 'studentAdmNo', 'studentClass', 'studentRollNo', 'fatherName', 'fatherMobile', 'challanSession', 'challanMonth', 'feeMonth', 'dueDate', 'baseAmount', 'payNowAmount', 'additionalCharges', 'discountValue', 'particulars', 'schoolName', 'schoolAddress', 'urduNote', 'challanNotes'];
@@ -2200,7 +2200,7 @@
             document.getElementById('challanMonth').value = now.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }).replace(' ', ', ');
             document.getElementById('feeMonth').value = now.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }).replace(' ', ', ');
             document.getElementById('particulars').value = 'Tuition Fee';
-            document.getElementById('schoolName').value = 'My own Science school';
+            document.getElementById('schoolName').value = 'American Lyceum';
             applyBranchDetailsToChallan('Main branch');
             document.getElementById('urduNote').value = 'Note: Fees will not be accepted after the due date.';
             document.getElementById('challanNotes').value = 'No additional instructions.';
@@ -3149,7 +3149,7 @@
                 discountLabel: discountInput || '0',
                 discountAmount,
                 particulars: document.getElementById('particulars').value.trim() || 'Tuition Fee',
-                schoolName: document.getElementById('schoolName').value.trim() || 'My own Science school',
+                schoolName: document.getElementById('schoolName').value.trim() || 'American Lyceum',
                 schoolAddress: document.getElementById('schoolAddress').value.trim() || `${CHALLAN_BRANCH_CONTACTS.main.campusLabel} - ${CHALLAN_BRANCH_CONTACTS.main.addressLine}`,
                 urduNote: document.getElementById('urduNote').value.trim() || '',
                 notes: document.getElementById('challanNotes').value.trim() || 'No additional instructions.',
@@ -3399,7 +3399,7 @@
                 const numericDiscount = Number(discountInput);
                 const discountAmount = Number.isNaN(numericDiscount) ? 0 : numericDiscount;
                 const particulars = document.getElementById('particulars').value.trim() || 'Tuition Fee';
-                const schoolName = document.getElementById('schoolName').value.trim() || 'My own Science school';
+                const schoolName = document.getElementById('schoolName').value.trim() || 'American Lyceum';
                 const schoolAddress = document.getElementById('schoolAddress').value.trim() || `${CHALLAN_BRANCH_CONTACTS.main.campusLabel} - ${CHALLAN_BRANCH_CONTACTS.main.addressLine}`;
                 const urduNote = document.getElementById('urduNote').value.trim() || '';
                 const notes = document.getElementById('challanNotes').value.trim() || 'No additional instructions.';
@@ -3614,7 +3614,7 @@
             const discountAmount = Number.isNaN(numericDiscount) ? 0 : numericDiscount;
 
             const particulars = document.getElementById('particulars').value.trim() || 'Tuition Fee';
-            const schoolName = document.getElementById('schoolName').value.trim() || 'My own Science school';
+            const schoolName = document.getElementById('schoolName').value.trim() || 'American Lyceum';
             const schoolAddress = document.getElementById('schoolAddress').value.trim() || `${CHALLAN_BRANCH_CONTACTS.main.campusLabel} - ${CHALLAN_BRANCH_CONTACTS.main.addressLine}`;
             const useFormAddressForBulk = !!selectedCampus;
             const urduNote = document.getElementById('urduNote').value.trim() || '';
@@ -3834,7 +3834,7 @@
             const numericDiscount = Number(discountInput);
             const discountAmount = Number.isNaN(numericDiscount) ? 0 : numericDiscount;
             const particulars = document.getElementById('particulars').value.trim() || 'Tuition Fee';
-            const schoolName = document.getElementById('schoolName').value.trim() || 'My own Science school';
+            const schoolName = document.getElementById('schoolName').value.trim() || 'American Lyceum';
             const schoolAddress = document.getElementById('schoolAddress').value.trim() || 'School Address';
             const urduNote = document.getElementById('urduNote').value.trim() || '';
             const notes = document.getElementById('challanNotes').value.trim() || 'No additional instructions.';

@@ -1308,12 +1308,12 @@ function escapeHtml(value) {
 
 function getBrandingSettings() {
     const fallback = {
-        schoolName: 'Myownschool',
-        schoolTitle: 'Myownschool',
+        schoolName: 'American Lyceum',
+        schoolTitle: 'American Lyceum',
         session: '',
-        phone: '',
-        address: '',
-        schoolAddress: '',
+        phone: '03174944258',
+        address: 'Main tehsil Road near post office Sharaqpur Sharif district sheikhupura',
+        schoolAddress: 'Main tehsil Road near post office Sharaqpur Sharif district sheikhupura',
         logoDataUrl: ''
     };
     try {
@@ -2284,12 +2284,12 @@ function queueWelcomeAnimationForNextPage(user) {
     try {
         const displayName = user?.fullName || user?.username || user?.role || 'User';
         const role = user?.role || 'User';
-        let schoolName = 'Myownschool';
+        let schoolName = 'American Lyceum';
         try {
             const settings = JSON.parse(localStorage.getItem('eduCore_settings') || '{}') || {};
             schoolName = String(settings.schoolName || settings.schoolTitle || schoolName).trim() || schoolName;
         } catch (_error) {
-            schoolName = 'Myownschool';
+            schoolName = 'American Lyceum';
         }
         sessionStorage.setItem(
             EDUCORE_WELCOME_SESSION_KEY,
@@ -2335,11 +2335,11 @@ function showWelcomeAnimationIfNeeded() {
     const schoolName = String(payload.schoolName || (() => {
         try {
             const settings = JSON.parse(localStorage.getItem('eduCore_settings') || '{}') || {};
-            return settings.schoolName || settings.schoolTitle || 'Myownschool';
+            return settings.schoolName || settings.schoolTitle || 'American Lyceum';
         } catch (_error) {
-            return 'Myownschool';
+            return 'American Lyceum';
         }
-    })()).trim() || 'Myownschool';
+    })()).trim() || 'American Lyceum';
     const escape = typeof escapeSessionText === 'function' ? escapeSessionText : (value) => String(value ?? '');
 
     overlay.innerHTML = `
@@ -6001,9 +6001,9 @@ function printStudentAdmissionFormFromEncoded(encodedPayload) {
 function getEmailSchoolName() {
     try {
         const branding = typeof getBrandingSettings === 'function' ? getBrandingSettings() : {};
-        return String(branding.schoolName || branding.schoolTitle || 'Myownschool').trim() || 'Myownschool';
+        return String(branding.schoolName || branding.schoolTitle || 'American Lyceum').trim() || 'American Lyceum';
     } catch (_error) {
-        return 'Myownschool';
+        return 'American Lyceum';
     }
 }
 
@@ -7495,7 +7495,7 @@ function printStudentAdmissionForm(student = {}) {
     const legacyPlaceholderNames = new Set(['harward school', 'harvard school']);
     const schoolName = rawSchoolName && !legacyPlaceholderNames.has(rawSchoolName.toLowerCase())
         ? rawSchoolName
-        : 'Myownschool';
+        : 'American Lyceum';
     const schoolLogo = new URL('images/logo.jpeg', window.location.href).href;
     const printedAt = new Date().toLocaleString();
     const statusLabel = getStudentStatusLabel(student);

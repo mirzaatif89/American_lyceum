@@ -1,4 +1,4 @@
-﻿# My Own School
+# American Lyceum
 
 Project is structured for separate frontend, backend, API, and runtime data work.
 

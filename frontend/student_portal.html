@@ -2386,7 +2386,7 @@
 
 <body>
     <header class="portal-header">
-        <img class="portal-logo" src="images/logo.jpeg" alt="Myownschool logo">
+        <img class="portal-logo" src="images/logo.jpeg" alt="American Lyceum logo">
         <button class="portal-menu-btn" type="button" onclick="logout()" title="Logout" aria-label="Logout">
             <i data-lucide="log-out" width="16"></i>
             Logout
@@ -2984,16 +2984,14 @@
         function getPortalBrandingSettings() {
             try {
                 return {
-                    schoolName: 'Myownschool',
-                    schoolTitle: 'Myownschool',
-                    phone: '',
-                    address: '',
-                    schoolAddress: '',
+                    schoolName: 'American Lyceum',
+                    schoolTitle: 'American Lyceum',
+                    phone: '03174944258', address: 'Main tehsil Road near post office Sharaqpur Sharif district sheikhupura', schoolAddress: 'Main tehsil Road near post office Sharaqpur Sharif district sheikhupura',
                     logoDataUrl: '',
                     ...(JSON.parse(localStorage.getItem(STORAGE_KEY_SETTINGS) || '{}') || {})
                 };
             } catch (_error) {
-                return { schoolName: 'Myownschool', schoolTitle: 'Myownschool', phone: '', address: '', schoolAddress: '', logoDataUrl: '' };
+                return { schoolName: 'American Lyceum', schoolTitle: 'American Lyceum', phone: '03174944258', address: 'Main tehsil Road near post office Sharaqpur Sharif district sheikhupura', schoolAddress: 'Main tehsil Road near post office Sharaqpur Sharif district sheikhupura', logoDataUrl: '' };
             }
         }
 
@@ -3144,7 +3142,7 @@
             <\/thead>
             <tbody>${subjectBlocks}<\/tbody>
         <\/table>
-        <div class="footer">Myownschool<\/div>
+        <div class="footer">American Lyceum<\/div>
     <\/main>
 <\/body>
 <\/html>`;
@@ -5151,20 +5149,20 @@
             if (normalizedCampus.includes('ali')) {
                 return {
                     campusLabel: 'Ali campus',
-                    contactLine: 'Address: Chapri Road Jand | Phone: 03085259900'
+                    contactLine: 'Address: Main tehsil Road near post office Sharaqpur Sharif district sheikhupura | Phone: 03174944258'
                 };
             }
 
             if (normalizedCampus.includes('fatima')) {
                 return {
                     campusLabel: 'Fatima campus',
-                    contactLine: 'Address: Nai Abadi | Phone: 03085259900'
+                    contactLine: 'Address: Main tehsil Road near post office Sharaqpur Sharif district sheikhupura | Phone: 03174944258'
                 };
             }
 
             return {
                 campusLabel: 'Main branch',
-                contactLine: 'Address: Dekhni Road Jand | Phone: 03045259900'
+                contactLine: 'Address: Main tehsil Road near post office Sharaqpur Sharif district sheikhupura | Phone: 03174944258'
             };
         }
 

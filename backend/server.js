@@ -802,8 +802,8 @@ async function enforceActionPermission(req, res, moduleKey, actionKey) {
 
 function getDefaultAdminCredentials() {
     return {
-        username: process.env.ADMIN_USERNAME || 'Myownschool',
-        password: process.env.ADMIN_PASSWORD || 'myownschool1122'
+        username: process.env.ADMIN_USERNAME || 'admin',
+        password: process.env.ADMIN_PASSWORD || 'admin1122'
     };
 }
 
@@ -2978,12 +2978,13 @@ app.get('/api/about-software', (_req, res) => {
         success: true,
         aboutSoftware: records[0] || {
             id: 'ABOUT-SOFTWARE',
-            appName: 'My Own School Jand',
-            schoolName: 'My Own School Jand',
-            website: 'https://myownschooljand.com/',
+            appName: 'American Lyceum',
+            schoolName: 'American Lyceum',
+            website: 'https://YOUR-DOMAIN.com/',
             supportEmail: '',
-            supportPhone: '',
-            description: 'Student and teacher portal APIs for My Own School Jand.',
+            supportPhone: '03174944258',
+            schoolAddress: 'Main tehsil Road near post office Sharaqpur Sharif district sheikhupura',
+            description: 'Student and teacher portal APIs for American Lyceum.',
             version: '1.0.0'
         }
     });
@@ -3240,7 +3241,7 @@ function buildLocalAiAnswer(question = '', context = {}) {
 
 async function callOpenAiForSchoolAnswer(message, context) {
     const prompt = [
-        'You are MyOwn School Jand portal assistant.',
+        'You are American Lyceum portal assistant.',
         'Answer in the same language style as the user. Most users write Roman Urdu.',
         'Use only the provided school system context. If exact data is not present, say that it is not available in the current system snapshot.',
         'Do not expose passwords, secrets, API keys, or hidden implementation details.',

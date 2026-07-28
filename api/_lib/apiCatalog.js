@@ -1,9 +1,9 @@
 const apiCatalog = {
-    project: 'My Own School CRM',
+    project: 'American Lyceum CRM',
     audience: 'External mobile app developer',
-    note: 'Use these backend APIs only. The mobile-app folder in this repo is not required for external app development.',
+    note: 'Use these backend APIs only. Mobile build artifacts are intentionally not kept in this repository.',
     baseUrlExamples: [
-        'https://myownschooljand.com/api',
+        'https://YOUR-DOMAIN.com/api',
         'https://YOUR-DOMAIN.com/api',
         'http://YOUR-SERVER-IP:3000/api',
         'http://localhost:3000/api'

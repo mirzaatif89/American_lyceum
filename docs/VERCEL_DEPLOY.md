@@ -18,8 +18,8 @@ DB_NAME=school_system
 DB_USER=your-mysql-user
 DB_PASSWORD=your-mysql-password
 JWT_SECRET=your-jwt-secret
-ADMIN_USERNAME=Myownschool
-ADMIN_PASSWORD=myownschool1122
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=admin1122
 PRINCIPAL_USERNAME=principal@school.com
 PRINCIPAL_PASSWORD=Principal123
 ```

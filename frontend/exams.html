@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exams - Myownschool</title>
+    <title>Exams - American Lyceum</title>
     <link rel="icon" type="image/png" href="images/logo.jpeg">
     <link rel="stylesheet" href="style.css?v=20260603-kids-roots-jand-brand">
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
@@ -15,7 +15,7 @@
     <div class="dashboard-container">
         <aside class="sidebar">
             <div class="logo-section">
-                <img class="sidebar-logo-img" src="images/logo.jpeg" alt="Myownschool logo">
+                <img class="sidebar-logo-img" src="images/logo.jpeg" alt="American Lyceum logo">
             </div>
 
             <nav class="nav-links">
@@ -162,7 +162,7 @@
                             <div class="result-form-section">
                                 <h4>Date Sheet Header</h4>
                                 <div class="result-form-fields">
-                                    <label>School Name<input type="text" id="dateSheetSchoolName" value="Myownschool"></label>
+                                    <label>School Name<input type="text" id="dateSheetSchoolName" value="American Lyceum"></label>
                                     <label>Exam Title<input type="text" id="dateSheetExamTitle" value="Mid Term Examination 2026"></label>
                                     <label>Session<input type="text" id="dateSheetSession" value="2025-26"></label>
                                     <label>Target Class / Group<input type="text" id="dateSheetClassGroup" value="Grade 5 / Section A"></label>
@@ -207,7 +207,7 @@
                         <div class="date-sheet-preview" id="dateSheetPreview">
                             <div class="date-sheet-frame">
                                 <div class="date-sheet-header">
-                                    <h2 id="previewDateSheetSchoolName">Myownschool</h2>
+                                    <h2 id="previewDateSheetSchoolName">American Lyceum</h2>
                                     <p id="previewDateSheetCampus">Main Campus</p>
                                     <h3 id="previewDateSheetExamTitle">Mid Term Examination 2026</h3>
                                     <div class="date-sheet-meta">
@@ -261,7 +261,7 @@
                         <div class="result-form-section">
                             <h4>School Header</h4>
                             <div class="result-form-fields">
-                                <label>School Name<input type="text" id="schoolName" value="Myownschool"></label>
+                                <label>School Name<input type="text" id="schoolName" value="American Lyceum"></label>
                                 <label>Campus / Branch<input type="text" id="campusName" value="Campus: Moh Dara / Khana Malkani Road"></label>
                                 <label>Contact Line<input type="text" id="schoolContact" value="0322-222222 / 0341-123456"></label>
                                 <label>Term Title<input type="text" id="termTitle" value="3rd Term 2025-26"></label>
@@ -331,7 +331,7 @@
                             <div class="result-card-topbar">
                                 <div class="result-logo-box"><img id="previewLeftLogo" alt="Left school logo"></div>
                                 <div class="result-school-center">
-                                    <h2 id="previewSchoolName">Myownschool</h2>
+                                    <h2 id="previewSchoolName">American Lyceum</h2>
                                     <p id="previewCampusName">Campus: Moh Dara / Khana Malkani Road</p>
                                     <p id="previewSchoolContact">0322-222222 / 0341-123456</p>
                                 </div>
@@ -1262,7 +1262,7 @@
         ];
 
         function getExamBrandingSettings() {
-            const fallback = { schoolName: 'Myownschool', schoolTitle: 'Myownschool', phone: '', address: '', schoolAddress: '', logoDataUrl: '' };
+            const fallback = { schoolName: 'American Lyceum', schoolTitle: 'American Lyceum', phone: '03174944258', address: 'Main tehsil Road near post office Sharaqpur Sharif district sheikhupura', schoolAddress: 'Main tehsil Road near post office Sharaqpur Sharif district sheikhupura', logoDataUrl: '' };
             try {
                 return { ...fallback, ...((typeof getBrandingSettings === 'function' ? getBrandingSettings() : {}) || {}) };
             } catch (_error) {
@@ -1286,10 +1286,10 @@
 
         function applyExamBrandingDefaults(force = false) {
             const branding = getExamBrandingSettings();
-            const schoolName = 'Myownschool';
+            const schoolName = 'American Lyceum';
             const contactLine = getExamContactLine();
             const logoSrc = getExamLogoSrc();
-            const legacyNames = ['Myownschool', 'Myownschool'];
+            const legacyNames = ['American Lyceum', 'American Lyceum'];
             const dateSheetSchool = document.getElementById('dateSheetSchoolName');
             const resultSchool = document.getElementById('schoolName');
             const contact = document.getElementById('schoolContact');
@@ -1306,7 +1306,7 @@
 
         function forceRefreshResultBrandingFromStorage() {
             const branding = getExamBrandingSettings();
-            const schoolName = 'Myownschool';
+            const schoolName = 'American Lyceum';
             const contactLine = getExamContactLine();
             const logoSrc = getExamLogoSrc();
 
@@ -1481,7 +1481,7 @@
             const branding = getExamBrandingSettings();
             const logoSrc = getExamLogoSrc();
             document.querySelectorAll('.date-sheet-logo').forEach((img) => { img.src = logoSrc; });
-            document.getElementById('previewDateSheetSchoolName').textContent = 'Myownschool';
+            document.getElementById('previewDateSheetSchoolName').textContent = 'American Lyceum';
             document.getElementById('previewDateSheetExamTitle').textContent = document.getElementById('dateSheetExamTitle').value || 'Exam Title';
             document.getElementById('previewDateSheetSession').textContent = document.getElementById('dateSheetSession').value || '-';
             document.getElementById('previewDateSheetClassGroup').textContent = document.getElementById('dateSheetClassGroup').value || '-';
@@ -1646,7 +1646,7 @@
             const branding = getExamBrandingSettings();
             const logoSrc = getExamLogoSrc();
 
-            document.getElementById('previewSchoolName').textContent = 'Myownschool';
+            document.getElementById('previewSchoolName').textContent = 'American Lyceum';
             document.getElementById('previewCampusName').textContent = document.getElementById('campusName').value || '';
             document.getElementById('previewSchoolContact').textContent = document.getElementById('schoolContact').value || '';
             document.getElementById('previewTermTitle').textContent = document.getElementById('termTitle').value || 'Term';

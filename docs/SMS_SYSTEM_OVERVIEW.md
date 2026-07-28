@@ -93,7 +93,6 @@ your-project/
 │   ├── SMS_IMPLEMENTATION_GUIDE.md
 │   ├── SMS_QUICK_REFERENCE.md
 │   ├── SERVER_INTEGRATION.md
-│   ├── SERVER_COMPLETE_EXAMPLE.js
 │   └── THIS FILE
 │
 └── test-sms.js (NEW - Test suite)
@@ -453,7 +452,6 @@ Potential features to add:
 | `SMS_IMPLEMENTATION_GUIDE.md` | Complete integration guide |
 | `SMS_QUICK_REFERENCE.md` | Quick commands and reference |
 | `SERVER_INTEGRATION.md` | Code snippets for server.js |
-| `SERVER_COMPLETE_EXAMPLE.js` | Full working server example |
 | `test-sms.js` | Automated testing script |
 | `sms_sender.html` | Web UI for sending SMS |
 | `routes/smsService.js` | Gateway integration logic |

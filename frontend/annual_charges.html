@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Annual Charges - Myownschool</title>
+    <title>Annual Charges - American Lyceum</title>
     <link rel="icon" type="image/png" href="images/logo.jpeg">
     <link rel="stylesheet" href="style.css?v=20260603-kids-roots-jand-brand">
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -45,7 +45,7 @@
 <body>
     <div class="dashboard-container">
         <aside class="sidebar">
-            <div class="logo-section"><img class="sidebar-logo-img" src="images/logo.jpeg" alt="Myownschool logo"></div>
+            <div class="logo-section"><img class="sidebar-logo-img" src="images/logo.jpeg" alt="American Lyceum logo"></div>
             <nav class="nav-links">
                 <a href="dashboard.html" class="nav-item"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></a>
                 <a href="students.html" class="nav-item"><i data-lucide="users"></i><span>Students</span></a>
@@ -91,7 +91,7 @@
                         <div class="slip-head">
                             <div class="slip-logo" id="annualPreviewLogo"><i data-lucide="school"></i></div>
                             <div>
-                                <h2 id="annualPreviewSchoolName">Myownschool</h2>
+                                <h2 id="annualPreviewSchoolName">American Lyceum</h2>
                                 <p id="annualPreviewSchoolAddress">Annual Charges Slip</p>
                                 <div class="slip-contact" id="annualPreviewSchoolPhone"></div>
                             </div>
@@ -140,7 +140,7 @@
 
         function getAnnualBrandingSettings() {
             const fallback = {
-                schoolName: 'Myownschool',
+                schoolName: 'American Lyceum',
                 phone: '',
                 address: '',
                 logoDataUrl: ''
@@ -185,7 +185,7 @@
         function getAnnualBrandingFromForm() {
             const branding = getAnnualBrandingSettings();
             return {
-                schoolName: branding.schoolName || 'Myownschool',
+                schoolName: branding.schoolName || 'American Lyceum',
                 phone: branding.phone || '',
                 address: branding.address || branding.schoolAddress || '',
                 logoSrc: getAnnualLogoSrc()
@@ -314,7 +314,7 @@
                         <div class="slip-head">
                             <div class="slip-logo">${options.logoSrc ? `<img src="${escAnnual(options.logoSrc)}" alt="School logo">` : 'SCH'}</div>
                             <div>
-                                <h2>${escAnnual(options.schoolName || 'Myownschool')}</h2>
+                                <h2>${escAnnual(options.schoolName || 'American Lyceum')}</h2>
                                 <p>${escAnnual(options.address || 'Annual Charges Slip')}</p>
                                 ${options.phone ? `<div class="slip-contact">Phone: ${escAnnual(options.phone)}</div>` : ''}
                             </div>

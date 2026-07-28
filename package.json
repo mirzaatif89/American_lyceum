@@ -1,7 +1,7 @@
 {
-  "name": "educore-backend",
+  "name": "american-lyceum-backend",
   "version": "1.0.0",
-  "description": "Real-time SQL Backend for School Management System",
+  "description": "Real-time SQL backend for American Lyceum",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",

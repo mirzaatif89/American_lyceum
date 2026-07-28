@@ -14,7 +14,6 @@
 - `SMS_SETUP_GUIDE.md` - Gateway setup instructions
 - `SMS_IMPLEMENTATION_GUIDE.md` - Complete integration guide
 - `SERVER_INTEGRATION.md` - Code snippets for server.js
-- `SERVER_COMPLETE_EXAMPLE.js` - Full server.js example
 
 ### Testing
 - `test-sms.js` - Automated test suite

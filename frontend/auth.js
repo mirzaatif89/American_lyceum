@@ -501,9 +501,9 @@
     function getWelcomeSchoolName() {
         try {
             const settings = JSON.parse(localStorage.getItem('eduCore_settings') || '{}') || {};
-            return String(settings.schoolName || settings.schoolTitle || 'Myownschool').trim() || 'Myownschool';
+            return String(settings.schoolName || settings.schoolTitle || 'American Lyceum').trim() || 'American Lyceum';
         } catch (_error) {
-            return 'Myownschool';
+            return 'American Lyceum';
         }
     }
 
@@ -528,7 +528,7 @@
         if (document.getElementById('eduWelcomeOverlay')) return;
 
         const displayName = String(payload.displayName || loggedInUser?.fullName || loggedInUser?.username || 'User').trim() || 'User';
-        const schoolName = String(payload.schoolName || getWelcomeSchoolName()).trim() || 'Myownschool';
+        const schoolName = String(payload.schoolName || getWelcomeSchoolName()).trim() || 'American Lyceum';
         const logoSrc = 'images/logo.jpeg';
         const overlay = document.createElement('div');
         overlay.id = 'eduWelcomeOverlay';
@@ -1158,7 +1158,7 @@
         return `
             <aside class="sidebar" data-portal-sidebar>
                 <div class="logo-section">
-                    <img class="sidebar-logo-img" src="images/logo.jpeg" alt="Myownschool logo">
+                    <img class="sidebar-logo-img" src="images/logo.jpeg" alt="American Lyceum logo">
                 </div>
                 <div class="portal-sidebar-user">
                     <strong>${escapeHtml(displayName)}</strong>

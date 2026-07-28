@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Revenue Report - Myownschool management</title>
+    <title>Revenue Report - American Lyceum management</title>
     <link rel="icon" type="image/png" href="images/logo.jpeg">
     <link rel="stylesheet" href="style.css">
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -402,7 +402,7 @@
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="logo-section">
-                <img class="sidebar-logo-img" src="images/logo.jpeg" alt="Myownschool logo">
+                <img class="sidebar-logo-img" src="images/logo.jpeg" alt="American Lyceum logo">
             </div>
 
             <nav class="nav-links">
@@ -1484,9 +1484,9 @@
             const schoolName = (() => {
                 try {
                     const settings = JSON.parse(localStorage.getItem('eduCore_settings') || '{}') || {};
-                    return String(settings.schoolName || settings.schoolTitle || 'Myownschool').trim() || 'Myownschool';
+                    return String(settings.schoolName || settings.schoolTitle || 'American Lyceum').trim() || 'American Lyceum';
                 } catch (_error) {
-                    return 'Myownschool';
+                    return 'American Lyceum';
                 }
             })();
             const printedAt = new Date().toLocaleString();
