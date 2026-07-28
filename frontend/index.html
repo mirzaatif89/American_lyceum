@@ -15,7 +15,7 @@
         <div class="top-strip">
             <span><i data-lucide="map-pin"></i><span id="headerAddress">Main tehsil Road near post office Sharaqpur Sharif district sheikhupura</span></span>
             <a href="tel:+923174944258"><i data-lucide="phone"></i><span>03174944258</span></a>
-            <a href="tel:+923174944258"><i data-lucide="phone-call"></i><span>03174944258</span></a>
+            <a href="#campus"><i data-lucide="school"></i><span>Sharaqpur Campus</span></a>
         </div>
 
         <nav class="main-nav" aria-label="Main navigation">
@@ -32,8 +32,7 @@
                 <a href="#programs">Programs</a>
                 <a href="#principal">Principal</a>
                 <a href="#director">Director</a>
-                <a href="#life">Gallery</a>
-                <a href="#campuses">Campuses</a>
+                <a href="#campus">Campus</a>
                 <a href="#admissions">Admissions</a>
                 <a class="nav-login" href="/login">Portal</a>
             </div>
@@ -43,7 +42,7 @@
     <main>
         <section class="hero" id="home">
             <div class="hero-media">
-                <img src="images/logo.jpeg" alt="American Lyceum students">
+                <img src="images/logo.jpeg" alt="American Lyceum logo">
             </div>
             <div class="hero-panel">
                 <p class="eyebrow">Admissions Open</p>
@@ -54,7 +53,7 @@
                     <a class="secondary-action" href="tel:+923174944258"><i data-lucide="phone"></i> Call School</a>
                 </div>
                 <div class="hero-campus-note">
-                    <span><i data-lucide="map-pin"></i> Main, Ali & Fatima Campuses</span>
+                    <span><i data-lucide="map-pin"></i> Sharaqpur Campus</span>
                     <span><i data-lucide="phone-call"></i> 03174944258</span>
                 </div>
             </div>
@@ -147,21 +146,6 @@
             </div>
         </section>
 
-        <section class="life-section" id="life">
-            <div class="section-shell">
-                <div class="section-heading">
-                    <p class="eyebrow">School Gallery</p>
-                    <h2>Real moments from school life.</h2>
-                </div>
-                <div class="gallery-row">
-                    <article><img src="images/logo.jpeg" alt="Tour activity"><span>Educational Tours</span></article>
-                    <article><img src="images/logo.jpeg" alt="School event"><span>Events</span></article>
-                    <article><img src="images/logo.jpeg" alt="Safety activity"><span>Safety Knowledge</span></article>
-                    <article><img src="images/logo.jpeg" alt="Students group"><span>Student Memories</span></article>
-                </div>
-            </div>
-        </section>
-
         <section class="admission-section" id="admissions">
             <div class="admission-copy">
                 <p class="eyebrow">Admissions</p>
@@ -179,7 +163,7 @@
                 <label>Class<input type="text" id="inquiryClass" required placeholder="Required class"></label>
                 <label>Phone<input type="tel" id="inquiryPhone" required placeholder="Contact number"></label>
                 <label>Email<input type="email" id="inquiryEmail" placeholder="Email address"></label>
-                <label>Campus<select id="inquiryCampus"><option value="">Select campus</option><option>Main Campus</option><option>Ali Campus</option><option>Fatima Campus</option></select></label>
+                <label>Campus<select id="inquiryCampus"><option value="Sharaqpur Campus">Sharaqpur Campus</option></select></label>
                 <label>Student Age<input type="text" id="inquiryStudentAge" placeholder="Age"></label>
                 <label>Previous School<input type="text" id="inquiryPreviousSchool" placeholder="Previous school"></label>
                 <label class="full-field">Address<input type="text" id="inquiryAddress" placeholder="Home address"></label>
@@ -189,30 +173,31 @@
             </form>
         </section>
 
-        <section class="campus-section" id="campuses">
+        <section class="campus-section" id="campus">
             <div class="section-shell">
                 <div class="section-heading compact">
-                    <p class="eyebrow">Campuses</p>
-                    <h2>Three campuses in Jand</h2>
+                    <p class="eyebrow">Campus</p>
+                    <h2>Sharaqpur Campus</h2>
+                    <p>American Lyceum operates from one focused campus for admissions, classes, parent support, and school administration.</p>
                 </div>
-                <div class="campus-grid">
+                <div class="campus-grid single-campus">
                     <article>
                         <i data-lucide="school"></i>
-                        <strong>Main Campus</strong>
+                        <strong>American Lyceum</strong>
                         <span>Main tehsil Road near post office Sharaqpur Sharif district sheikhupura</span>
                         <a href="tel:+923174944258">03174944258</a>
                     </article>
                     <article>
-                        <i data-lucide="school"></i>
-                        <strong>Ali Campus</strong>
-                        <span>Main tehsil Road near post office Sharaqpur Sharif district sheikhupura</span>
-                        <a href="tel:+923174944258">03174944258</a>
+                        <i data-lucide="clipboard-check"></i>
+                        <strong>Admissions Office</strong>
+                        <span>Visit or call for admission details, fee information, and parent guidance.</span>
+                        <a href="#admissions">Apply Online</a>
                     </article>
                     <article>
-                        <i data-lucide="school"></i>
-                        <strong>Fatima Campus</strong>
-                        <span>Main tehsil Road near post office Sharaqpur Sharif district sheikhupura</span>
-                        <a href="tel:+923174944258">03174944258</a>
+                        <i data-lucide="clock-3"></i>
+                        <strong>School Support</strong>
+                        <span>Portal, attendance, fee, result, notices, and student records are managed from the same campus.</span>
+                        <a href="/login">Open Portal</a>
                     </article>
                 </div>
             </div>
@@ -239,9 +224,7 @@
             </div>
             <div class="contact-grid">
                 <a href="tel:+923174944258"><i data-lucide="phone"></i><span>Main Campus: 03174944258</span></a>
-                <a href="tel:+923174944258"><i data-lucide="phone-call"></i><span>Ali Campus: 03174944258</span></a>
-                <a href="tel:+923174944258"><i data-lucide="phone-call"></i><span>Fatima Campus: 03174944258</span></a>
-                <a href="tel:+923174944258"><i data-lucide="phone-call"></i><span>03174944258</span></a>
+                <a href="#campus"><i data-lucide="school"></i><span>Sharaqpur Campus</span></a>
                 <a class="whatsapp-contact" href="https://wa.me/923174944258" target="_blank" rel="noopener"><i data-lucide="message-circle"></i><span>WhatsApp: 03174944258</span></a>
             </div>
         </section>

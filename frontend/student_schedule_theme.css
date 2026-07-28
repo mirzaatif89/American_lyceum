@@ -14,7 +14,7 @@
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
-    color: #1e4f85;
+    color: #2b124d;
     font-weight: 800;
     text-decoration: none;
 }
@@ -43,7 +43,7 @@
 }
 
 .schedule-hub-card:hover {
-    border-color: #2b6cb0;
+    border-color: #43206f;
     box-shadow: 0 16px 34px rgba(15, 23, 42, 0.1);
     transform: translateY(-2px);
 }
@@ -55,8 +55,8 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: #dbeafe;
-    color: #1e4f85;
+    background: #f1e8f7;
+    color: #2b124d;
     flex: 0 0 auto;
 }
 
@@ -126,7 +126,7 @@
 .schedule-panel input:focus,
 .schedule-panel select:focus,
 .schedule-panel textarea:focus {
-    border-color: #2b6cb0;
+    border-color: #43206f;
     box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.14);
 }
 
@@ -189,8 +189,8 @@
 }
 
 .schedule-action-btn.edit {
-    background: #dbeafe;
-    color: #1d4ed8;
+    background: #f1e8f7;
+    color: #43206f;
 }
 
 .schedule-action-btn.delete {

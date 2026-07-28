@@ -641,9 +641,9 @@
         }
 
         .student-attendance-day.leave {
-            background: #dbeafe;
+            background: #f1e8f7;
             border-color: #93c5fd;
-            color: #1d4ed8;
+            color: #43206f;
         }
 
         .student-attendance-day.absent {
@@ -1921,8 +1921,8 @@
             min-height: 32px;
             padding: 0.4rem 0.7rem;
             border-radius: 999px;
-            background: #eff6ff;
-            color: #1d4ed8;
+            background: #fbf7fd;
+            color: #43206f;
             font-weight: 900;
             font-size: 0.78rem;
             white-space: nowrap;
@@ -5143,25 +5143,9 @@
             });
         }
 
-        function getStudentBranchContactDetails(campusName) {
-            const normalizedCampus = String(campusName || '').trim().toLowerCase();
-
-            if (normalizedCampus.includes('ali')) {
-                return {
-                    campusLabel: 'Ali campus',
-                    contactLine: 'Address: Main tehsil Road near post office Sharaqpur Sharif district sheikhupura | Phone: 03174944258'
-                };
-            }
-
-            if (normalizedCampus.includes('fatima')) {
-                return {
-                    campusLabel: 'Fatima campus',
-                    contactLine: 'Address: Main tehsil Road near post office Sharaqpur Sharif district sheikhupura | Phone: 03174944258'
-                };
-            }
-
+        function getStudentBranchContactDetails(_campusName) {
             return {
-                campusLabel: 'Main branch',
+                campusLabel: 'Sharaqpur Campus',
                 contactLine: 'Address: Main tehsil Road near post office Sharaqpur Sharif district sheikhupura | Phone: 03174944258'
             };
         }

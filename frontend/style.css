@@ -2,17 +2,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-    --primary-color: #2b6cb0;
-    --primary-dark: #1e4f85;
-    --secondary-color: #5f6b7a;
-    --accent-color: #63b3ed;
-    --bg-color: #f3f8fc;
+    --primary-color: #43206f;
+    --primary-dark: #2b124d;
+    --secondary-color: #6b5a7c;
+    --accent-color: #d9272f;
+    --bg-color: #f8f5fb;
     --surface-color: #ffffff;
-    --text-primary: #17324d;
-    --text-secondary: #5f6b7a;
+    --text-primary: #20152f;
+    --text-secondary: #6b5a7c;
     --success-color: #10b981;
-    --danger-color: #ef4444;
-    --border-color: #d5e4f2;
+    --danger-color: #d9272f;
+    --border-color: #e6dff0;
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
     --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
     --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
@@ -96,8 +96,8 @@ ul {
     display: flex;
     height: 100vh;
     width: 100%;
-    background: rgba(43, 108, 176, 0.08);
-    /* Light blue background */
+    background: linear-gradient(135deg, rgba(67, 32, 111, 0.1), rgba(217, 39, 47, 0.08));
+    /* Logo theme background */
     align-items: center;
     justify-content: center;
 }
@@ -128,7 +128,7 @@ ul {
 .login-icon-circle {
     width: min(270px, 100%);
     min-height: 86px;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(30, 79, 133, 0.14));
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(43, 18, 77, 0.18));
     border: 1px solid rgba(255, 255, 255, 0.28);
     border-radius: 8px;
     display: grid;
@@ -147,8 +147,8 @@ ul {
     width: 46px;
     height: 46px;
     border-radius: 8px;
-    background-color: #eff6ff;
-    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8 15.5L20 9L32 15.5L20 22L8 15.5Z' fill='%231e4f85'/%3E%3Cpath d='M13 19V25.5C13 27.8 16.1 30 20 30C23.9 30 27 27.8 27 25.5V19' stroke='%23173f6b' stroke-width='2.2' stroke-linecap='round'/%3E%3Cpath d='M32 16V24' stroke='%232b6cb0' stroke-width='2.2' stroke-linecap='round'/%3E%3Ccircle cx='32' cy='26.5' r='2.4' fill='%232b6cb0'/%3E%3C/svg%3E");
+    background-color: #fbf7fd;
+    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8 15.5L20 9L32 15.5L20 22L8 15.5Z' fill='%2343206f'/%3E%3Cpath d='M13 19V25.5C13 27.8 16.1 30 20 30C23.9 30 27 27.8 27 25.5V19' stroke='%232b124d' stroke-width='2.2' stroke-linecap='round'/%3E%3Cpath d='M32 16V24' stroke='%23d9272f' stroke-width='2.2' stroke-linecap='round'/%3E%3Ccircle cx='32' cy='26.5' r='2.4' fill='%23d9272f'/%3E%3C/svg%3E");
     background-position: center;
     background-repeat: no-repeat;
     background-size: 39px 39px;
@@ -156,7 +156,7 @@ ul {
 }
 
 .login-icon-circle::after {
-    content: "American Lyceum\A Jand";
+    content: "American Lyceum\A Sharaqpur";
     white-space: pre-line;
     color: #ffffff;
     font-size: 1.16rem;
@@ -406,7 +406,7 @@ ul {
 
 .sidebar {
     width: 244px;
-    background: linear-gradient(180deg, #1e4f85 0%, #123b65 100%);
+    background: linear-gradient(180deg, #2b124d 0%, #2b124d 100%);
     border-right: 1px solid rgba(255, 255, 255, 0.08);
     display: flex;
     flex-direction: column;
@@ -441,8 +441,8 @@ ul {
     width: 36px;
     height: 36px;
     border-radius: 8px;
-    background-color: #eff6ff;
-    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8 15.5L20 9L32 15.5L20 22L8 15.5Z' fill='%231e4f85'/%3E%3Cpath d='M13 19V25.5C13 27.8 16.1 30 20 30C23.9 30 27 27.8 27 25.5V19' stroke='%23173f6b' stroke-width='2.2' stroke-linecap='round'/%3E%3Cpath d='M32 16V24' stroke='%232b6cb0' stroke-width='2.2' stroke-linecap='round'/%3E%3Ccircle cx='32' cy='26.5' r='2.4' fill='%232b6cb0'/%3E%3C/svg%3E");
+    background-color: #fbf7fd;
+    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8 15.5L20 9L32 15.5L20 22L8 15.5Z' fill='%2343206f'/%3E%3Cpath d='M13 19V25.5C13 27.8 16.1 30 20 30C23.9 30 27 27.8 27 25.5V19' stroke='%232b124d' stroke-width='2.2' stroke-linecap='round'/%3E%3Cpath d='M32 16V24' stroke='%23d9272f' stroke-width='2.2' stroke-linecap='round'/%3E%3Ccircle cx='32' cy='26.5' r='2.4' fill='%23d9272f'/%3E%3C/svg%3E");
     background-position: center;
     background-repeat: no-repeat;
     background-size: 31px 31px;
@@ -450,7 +450,7 @@ ul {
 }
 
 .sidebar .logo-section::after {
-    content: "American Lyceum\A Jand";
+    content: "American Lyceum\A Sharaqpur";
     color: #ffffff;
     font-size: 0.9rem;
     font-weight: 800;
@@ -650,7 +650,7 @@ ul {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #63b3ed 0%, #2b6cb0 100%);
+    background: linear-gradient(135deg, #d9272f 0%, #43206f 100%);
     color: white;
     display: flex;
     align-items: center;
@@ -914,7 +914,7 @@ ul {
     position: absolute;
     inset: 0 0 auto 0;
     height: 3px;
-    background: linear-gradient(90deg, #2b6cb0 0%, #3b82c4 100%);
+    background: linear-gradient(90deg, #43206f 0%, #5a2d86 100%);
 }
 
 .card:hover {
@@ -1318,8 +1318,8 @@ tbody tr:hover {
 
 .doc-download-btn {
     border: 1px solid #bfdbfe;
-    background: linear-gradient(135deg, #eff6ff, #dbeafe);
-    color: #1d4ed8;
+    background: linear-gradient(135deg, #fbf7fd, #f1e8f7);
+    color: #43206f;
     border-radius: 999px;
     padding: 0.38rem 0.72rem;
     font-size: 0.72rem;
@@ -2258,7 +2258,7 @@ button {
         padding: 0.4rem;
         border: 1px solid rgba(255, 255, 255, 0.14);
         border-radius: 8px;
-        background: #0b3f3b;
+        background: #2b124d;
         box-shadow: var(--shadow-lg);
     }
 

@@ -16,7 +16,7 @@
             --challan-soft: #6b7a90;
             --challan-text: #1f2d3d;
             --challan-accent: #1e3a8a;
-            --challan-accent-soft: #dbeafe;
+            --challan-accent-soft: #f1e8f7;
         }
 
         .challan-shell {
@@ -559,8 +559,8 @@
         .class-students-selected-pill {
             padding: 0.25rem 0.6rem;
             border-radius: 999px;
-            background: #eff6ff;
-            color: #1d4ed8;
+            background: #fbf7fd;
+            color: #43206f;
             font-weight: 700;
             font-size: 0.72rem;
             white-space: nowrap;
@@ -636,7 +636,7 @@
 
         .class-student-item:hover {
             border-color: #93c5fd;
-            background: #eff6ff;
+            background: #fbf7fd;
         }
 
         .class-student-check {
@@ -1429,15 +1429,7 @@
     <script>
         const CHALLAN_BRANCH_CONTACTS = {
             main: {
-                campusLabel: 'Main branch',
-                addressLine: 'Address: Main tehsil Road near post office Sharaqpur Sharif district sheikhupura. Phone: 03174944258'
-            },
-            ali: {
-                campusLabel: 'Ali campus',
-                addressLine: 'Address: Main tehsil Road near post office Sharaqpur Sharif district sheikhupura. Phone: 03174944258'
-            },
-            fatima: {
-                campusLabel: 'Fatima campus',
+                campusLabel: 'Sharaqpur Campus',
                 addressLine: 'Address: Main tehsil Road near post office Sharaqpur Sharif district sheikhupura. Phone: 03174944258'
             }
         };
@@ -1463,7 +1455,7 @@
         let classPopupSelectedStudentIds = new Set();
         let classPopupLastVisibleStudentIds = [];
         let challanSelectedFeeMonths = [];
-        const CHALLAN_FALLBACK_CAMPUSES = ['Main Campus', 'Ali campus', 'Fatima Campus'];
+        const CHALLAN_FALLBACK_CAMPUSES = ['Sharaqpur Campus'];
         const CHALLAN_FALLBACK_CLASSES = [
             'Play Group', 'KG1', 'KG2',
             'Class 1', 'Class 2', 'Class 3', 'Class 4', 'Class 5',
@@ -2179,10 +2171,7 @@
             triggerChallanRefresh();
         }
 
-        function getChallanBranchContactDetails(campusName) {
-            const normalizedCampus = String(campusName || '').trim().toLowerCase();
-            if (normalizedCampus.includes('ali')) return CHALLAN_BRANCH_CONTACTS.ali;
-            if (normalizedCampus.includes('fatima')) return CHALLAN_BRANCH_CONTACTS.fatima;
+        function getChallanBranchContactDetails(_campusName) {
             return CHALLAN_BRANCH_CONTACTS.main;
         }
 

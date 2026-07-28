@@ -538,7 +538,7 @@
         }
 
         .exam-module-icon.result {
-            background: linear-gradient(135deg, #1d4ed8 0%, #60a5fa 100%);
+            background: linear-gradient(135deg, #43206f 0%, #d9272f 100%);
         }
 
         .exam-module-icon.history {
@@ -2006,23 +2006,12 @@
 
         const RESULT_BRANCH_CONTACTS = {
             main: {
-                campusLabel: 'Main branch',
-                contactLine: 'Address: Main tehsil Road near post office Sharaqpur Sharif district sheikhupura | Phone: 03174944258'
-            },
-            ali: {
-                campusLabel: 'Ali campus',
-                contactLine: 'Address: Main tehsil Road near post office Sharaqpur Sharif district sheikhupura | Phone: 03174944258'
-            },
-            fatima: {
-                campusLabel: 'Fatima campus',
+                campusLabel: 'Sharaqpur Campus',
                 contactLine: 'Address: Main tehsil Road near post office Sharaqpur Sharif district sheikhupura | Phone: 03174944258'
             }
         };
 
-        function getResultBranchContactDetails(campusName) {
-            const normalizedCampus = String(campusName || '').trim().toLowerCase();
-            if (normalizedCampus.includes('ali')) return RESULT_BRANCH_CONTACTS.ali;
-            if (normalizedCampus.includes('fatima')) return RESULT_BRANCH_CONTACTS.fatima;
+        function getResultBranchContactDetails(_campusName) {
             return RESULT_BRANCH_CONTACTS.main;
         }
 
