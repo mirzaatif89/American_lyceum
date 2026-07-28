@@ -11,6 +11,7 @@ const mysql = require('mysql2/promise');
 const QRCode = require('qrcode');
 const { getSmtpConfig, sendSmtpEmail } = require('../api/_lib/mailer');
 const apiCatalog = require('../api/_lib/apiCatalog');
+const { normalizeJsonUpload, parseMultipart, saveUploadedFile } = require('../api/_lib/uploadFile');
 
 require('dotenv').config();
 
@@ -91,6 +92,39 @@ app.get('/:routeName([a-zA-Z0-9_-]+)', (req, res, next) => {
 });
 
 app.use(express.static(FRONTEND_DIR));
+
+function readRawRequestBuffer(req) {
+    return new Promise((resolve, reject) => {
+        const chunks = [];
+        req.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
+        req.on('end', () => resolve(Buffer.concat(chunks)));
+        req.on('error', reject);
+    });
+}
+
+app.post('/api/upload', async (req, res) => {
+    try {
+        const contentType = String(req.headers['content-type'] || '').toLowerCase();
+        let fields = req.body && typeof req.body === 'object' ? req.body : {};
+        let file = null;
+
+        if (contentType.includes('multipart/form-data')) {
+            const parsed = parseMultipart(await readRawRequestBuffer(req), contentType);
+            fields = parsed.fields;
+            file = parsed.files[0] || null;
+        } else {
+            file = normalizeJsonUpload(fields);
+        }
+
+        const uploadedFile = saveUploadedFile({ req, uploadRoot: FRONTEND_DIR, fields, file });
+        res.json({ success: true, file: uploadedFile, url: uploadedFile.url });
+    } catch (error) {
+        res.status(error.statusCode || 500).json({
+            success: false,
+            message: error.message || 'File upload failed.'
+        });
+    }
+});
 
 app.get('/health', (_req, res) => {
     res.json({
@@ -2934,6 +2968,34 @@ registerMobileCollectionRoutes({ route: 'uploaded-assignments', storeName: 'uplo
 registerMobileCollectionRoutes({ route: 'uploaded-lectures', storeName: 'uploaded_lectures', recordsKey: 'lectures', itemKey: 'lecture', prefix: 'LECTURE' });
 registerMobileCollectionRoutes({ route: 'student-quizzes', storeName: 'student_quizzes', recordsKey: 'quizzes', itemKey: 'quiz', prefix: 'QUIZ' });
 registerMobileCollectionRoutes({ route: 'student-quiz-submissions', storeName: 'student_quiz_submissions', recordsKey: 'submissions', itemKey: 'submission', prefix: 'QUIZ-SUB' });
+registerMobileCollectionRoutes({ route: 'student-results', storeName: 'student_results', recordsKey: 'results', itemKey: 'result', prefix: 'RESULT' });
+registerMobileCollectionRoutes({ route: 'student-syllabus', storeName: 'student_syllabus', recordsKey: 'syllabus', itemKey: 'syllabusItem', prefix: 'SYL' });
+registerMobileCollectionRoutes({ route: 'teacher-assigned-classes', storeName: 'teacher_assigned_classes', recordsKey: 'assignedClasses', itemKey: 'assignedClass', prefix: 'TCLASS' });
+
+app.get('/api/about-software', (_req, res) => {
+    const records = readMobileStore('about_software');
+    res.json({
+        success: true,
+        aboutSoftware: records[0] || {
+            id: 'ABOUT-SOFTWARE',
+            appName: 'My Own School Jand',
+            schoolName: 'My Own School Jand',
+            website: 'https://myownschooljand.com/',
+            supportEmail: '',
+            supportPhone: '',
+            description: 'Student and teacher portal APIs for My Own School Jand.',
+            version: '1.0.0'
+        }
+    });
+});
+
+app.post('/api/about-software', (req, res) => {
+    const { record } = upsertMobileRecord('about_software', {
+        id: req.body?.id || 'ABOUT-SOFTWARE',
+        ...(req.body || {})
+    }, 'ABOUT');
+    res.json({ success: true, aboutSoftware: record });
+});
 
 app.get('/api/leave-requests', (req, res) => {
     let leaveRequests = readMobileStore('leave_requests');
