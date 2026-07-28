@@ -673,7 +673,7 @@ ul {
     overflow-y: auto;
     overflow-x: hidden;
     padding: 2rem;
-    background: linear-gradient(180deg, #f7fffe 0%, #edf9f7 100%);
+    background: linear-gradient(180deg, #fbf7fd 0%, #f8f5fb 100%);
 }
 
 .header {
@@ -688,7 +688,7 @@ ul {
 .header h1 {
     font-size: 1.75rem;
     font-weight: 700;
-    color: #164e52;
+    color: var(--primary-dark);
 }
 
 .search-bar {
@@ -756,7 +756,7 @@ ul {
     position: absolute;
     top: 100%;
     right: 0;
-    width: 350px;
+    width: min(350px, calc(100vw - 32px));
     background: white;
     border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);

@@ -142,7 +142,7 @@
 
         .dashboard-header-actions {
             display: grid;
-            grid-template-columns: minmax(150px, 200px) minmax(150px, 200px) 34px;
+            grid-template-columns: minmax(150px, 200px) minmax(150px, 200px) minmax(132px, 170px) 38px;
             align-items: center;
             justify-content: end;
             gap: 0.55rem;
@@ -163,9 +163,38 @@
 
         .dashboard-header-actions .notification-bell {
             margin-top: 0 !important;
-            width: 34px;
-            height: 34px;
+            width: 38px;
+            height: 38px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: #fff;
             justify-content: center;
+            align-self: center;
+            justify-self: end;
+            color: var(--primary-color);
+            transform: none;
+        }
+
+        .dashboard-header-actions .notification-bell:hover {
+            transform: none;
+            border-color: var(--primary-color);
+            background: #fbf7fd;
+        }
+
+        .dashboard-header-actions .notification-badge {
+            top: -7px;
+            right: -7px;
+            width: 18px;
+            height: 18px;
+            background: var(--danger-color);
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.68rem;
+            font-weight: 800;
+            border: 2px solid #fff;
         }
 
         #dashboardStatsGrid {
@@ -223,7 +252,7 @@
         @media (max-width: 980px) {
             .dashboard-header-actions {
                 width: 100%;
-                grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+                grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(130px, 0.75fr) 38px;
             }
 
             .dashboard-email-btn,
@@ -235,11 +264,18 @@
 
         @media (max-width: 640px) {
             .dashboard-header-actions {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr 38px;
+                align-items: stretch;
+            }
+
+            .dashboard-email-btn,
+            .dashboard-campus-select {
+                grid-column: 1 / -1;
             }
 
             .dashboard-header-actions .notification-bell {
-                justify-self: start;
+                grid-column: 2;
+                justify-self: end;
             }
         }
     </style>
@@ -338,9 +374,9 @@
                         <option value="all">All Campuses</option>
                     </select>
                     <input id="dashboardRevenueMonthPicker" class="dashboard-campus-select" type="month" aria-label="Select revenue month">
-                    <div class="notification-bell" id="notificationBell" style="position: relative; margin-top: 1rem;">
+                    <div class="notification-bell" id="notificationBell" aria-label="Notifications" title="Notifications">
                         <i data-lucide="bell" size="24"></i>
-                        <span class="notification-badge" id="notifBadge" style="background-color: #ef4444; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: bold;">0</span>
+                        <span class="notification-badge" id="notifBadge">0</span>
 
                         <div class="notif-panel" id="notificationPanel">
                             <div class="notif-header">
