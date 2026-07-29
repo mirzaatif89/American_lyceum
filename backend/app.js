@@ -5,7 +5,7 @@ const PORT = Number(process.env.PORT || 3000);
 startServer()
     .then(() => {
         server.listen(PORT, '0.0.0.0', () => {
-            console.log(`Real-Time SQL Server running on port ${PORT}`);
+            console.log(`Static frontend server running on port ${PORT}. Old APIs are removed.`);
         });
     })
     .catch((err) => {
