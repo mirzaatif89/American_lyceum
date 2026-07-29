@@ -1417,6 +1417,8 @@
         const TEACHER_THEME_KEY = 'eduCore_teacher_portal_theme';
         let currentTeacherProfile = null;
         let remoteTeacherLeaveRequests = null;
+        let remoteTeacherSalaries = null;
+        let remoteTeacherComplaints = null;
 
         function syncThemeMenu() {
             const isDark = document.body.classList.contains('portal-dark');
@@ -1557,9 +1559,22 @@
 
         function getTeacherSalaryPayment(month = monthKey()) {
             const teacherId = getTeacherIdentity();
-            const records = readLocal(TEACHER_SALARY_KEY);
+            const records = remoteTeacherSalaries || readLocal(TEACHER_SALARY_KEY);
             const map = records && !Array.isArray(records) ? records : {};
             return map[`teacher_${teacherId}_${month}`] || map[`${teacherId}_${month}`] || null;
+        }
+
+        function normalizeTeacherProfilePayload(payload) {
+            return payload?.teacher || payload;
+        }
+
+        function mergePortalRecords(remote = [], cached = []) {
+            const records = new Map();
+            [...cached, ...remote].forEach((item) => {
+                if (!item?.id) return;
+                records.set(String(item.id), { ...(records.get(String(item.id)) || {}), ...item });
+            });
+            return Array.from(records.values());
         }
 
         function getSchedule() {
@@ -1583,6 +1598,25 @@
             return Array.isArray(direct) ? direct : (Array.isArray(legacy) ? legacy : []);
         }
 
+        function normalizeTeacherAttendanceStore(rawAttendance) {
+            if (!rawAttendance) return {};
+            if (!Array.isArray(rawAttendance)) return rawAttendance;
+
+            return rawAttendance.reduce((store, item) => {
+                const teacherId = String(item?.teacherId || item?.employeeId || item?.id || '').trim();
+                const date = String(item?.date || '').trim();
+                if (!teacherId || !/^\d{4}-\d{2}-\d{2}$/.test(date)) return store;
+
+                const month = date.slice(0, 7);
+                const day = Number(date.slice(8, 10));
+                const daysInMonth = new Date(Number(month.slice(0, 4)), Number(month.slice(5, 7)), 0).getDate();
+                const key = `${teacherId}_${month}`;
+                if (!Array.isArray(store[key])) store[key] = Array.from({ length: daysInMonth }, () => '');
+                store[key][day - 1] = item.status || '';
+                return store;
+            }, {});
+        }
+
         async function getTeacherAttendanceStore() {
             try {
                 const response = await fetch(`${API_BASE_URL}/teacher-attendance`, {
@@ -1590,13 +1624,31 @@
                 });
                 const result = response.ok ? await response.json() : null;
                 if (result?.attendance) {
-                    localStorage.setItem('eduCore_teacher_attendance', JSON.stringify(result.attendance));
-                    return result.attendance;
+                    const attendance = normalizeTeacherAttendanceStore(result.attendance);
+                    localStorage.setItem('eduCore_teacher_attendance', JSON.stringify(attendance));
+                    return attendance;
                 }
             } catch (_error) {
                 // Fall back to browser cache below.
             }
-            return readLocal('eduCore_teacher_attendance');
+            return normalizeTeacherAttendanceStore(readLocal('eduCore_teacher_attendance'));
+        }
+
+        async function loadTeacherSalaries() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/teacher-salaries`, {
+                    headers: authToken ? { Authorization: `Bearer ${authToken}` } : {}
+                });
+                const result = await response.json().catch(() => ({}));
+                if (!response.ok || !result?.success) throw new Error(result?.message || 'Salary records could not be loaded.');
+                remoteTeacherSalaries = result.salaries && typeof result.salaries === 'object' && !Array.isArray(result.salaries)
+                    ? result.salaries
+                    : {};
+                localStorage.setItem(TEACHER_SALARY_KEY, JSON.stringify(remoteTeacherSalaries));
+            } catch (_error) {
+                remoteTeacherSalaries = null;
+            }
+            renderSalaryRecord();
         }
 
         function renderPortalList(hostId, items, emptyText, renderItem) {
@@ -2033,7 +2085,7 @@
             const list = document.getElementById('teacherComplaintHistory');
             if (!list) return;
             const senderId = getTeacherComplaintSenderId();
-            const complaints = readLocal(COMPLAINT_KEY)
+            const complaints = (Array.isArray(remoteTeacherComplaints) ? remoteTeacherComplaints : readLocal(COMPLAINT_KEY))
                 .filter((item) => item.senderRole === 'Teacher' && String(item.senderId || '').trim().toLowerCase() === senderId)
                 .sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
             if (!complaints.length) {
@@ -2060,7 +2112,8 @@
         }
 
         function downloadTeacherComplaintFile(id) {
-            const item = readLocal(COMPLAINT_KEY).find((complaint) => complaint.id === id);
+            const complaints = Array.isArray(remoteTeacherComplaints) ? remoteTeacherComplaints : readLocal(COMPLAINT_KEY);
+            const item = complaints.find((complaint) => complaint.id === id);
             if (!item?.file?.dataUrl) {
                 showAppAlert('No file is attached to this complaint.', 'File Missing');
                 return;
@@ -2121,10 +2174,42 @@
                 showAppAlert('Complaint could not be saved. The attached file may be too large.', 'Storage Full');
                 return;
             }
+            try {
+                const response = await fetch(`${API_BASE_URL}/complaints`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(complaints[complaints.length - 1])
+                });
+                const result = await response.json().catch(() => ({}));
+                if (!response.ok || !result?.success) throw new Error(result?.message || 'Complaint sync failed.');
+                remoteTeacherComplaints = mergePortalRecords(result.complaints || [], complaints);
+                localStorage.setItem(COMPLAINT_KEY, JSON.stringify(remoteTeacherComplaints));
+            } catch (_error) {
+                remoteTeacherComplaints = complaints;
+            }
             event.target.reset();
             updateTeacherComplaintFileLabel();
             renderTeacherComplaints();
             showAppAlert('Your complaint has been submitted.', 'Complaint Sent');
+        }
+
+        async function loadTeacherComplaints() {
+            try {
+                const cached = readLocal(COMPLAINT_KEY);
+                const response = await fetch(`${API_BASE_URL}/complaints`, {
+                    headers: authToken ? { Authorization: `Bearer ${authToken}` } : {}
+                });
+                const result = await response.json().catch(() => ({}));
+                if (!response.ok || !result?.success) throw new Error(result?.message || 'Complaints could not be loaded.');
+                remoteTeacherComplaints = mergePortalRecords(result.complaints || [], cached);
+                localStorage.setItem(COMPLAINT_KEY, JSON.stringify(remoteTeacherComplaints));
+            } catch (_error) {
+                remoteTeacherComplaints = null;
+            }
+            renderTeacherComplaints();
         }
 
         async function submitTeacherLeave(event) {
@@ -2234,15 +2319,19 @@
                     headers: { Authorization: `Bearer ${authToken}` }
                 });
                 if (!response.ok) throw new Error('Unable to load teacher profile.');
-                const teacher = await response.json();
+                const teacher = normalizeTeacherProfilePayload(await response.json());
                 applyTeacherData(teacher);
                 await loadTeacherMessages();
+                await loadTeacherComplaints();
+                await loadTeacherSalaries();
                 await loadTeacherLeaveRequests();
             } catch (_error) {
                 const fallback = getTeacherFallback();
                 if (fallback) {
                     applyTeacherData(fallback);
                     await loadTeacherMessages();
+                    await loadTeacherComplaints();
+                    await loadTeacherSalaries();
                     await loadTeacherLeaveRequests();
                     return;
                 }

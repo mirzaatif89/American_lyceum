@@ -16,6 +16,16 @@ Local testing:
 http://localhost:3000/api
 ```
 
+## Current Backend Status
+
+Current API implementation is JSON-file backed for mobile app development and testing. Data is stored under:
+
+```text
+data/mobile_api_store
+```
+
+Use `GET /api/catalog` for the complete machine-readable endpoint list. The catalog should be shared with the app developer.
+
 ## Headers
 
 For JSON requests:
@@ -180,6 +190,16 @@ The backend exposes the machine-readable API list:
 GET /api/catalog
 GET /api/mobile-api-list
 ```
+
+## Website and Event APIs
+
+| Module | Method | Endpoint | Notes |
+| --- | --- | --- | --- |
+| School Info | GET | `/api/about-software` | School name, principal, contact, social links |
+| Events | GET | `/api/events` | Event image list for app gallery |
+| Events | POST | `/api/events` | Add/update event record |
+| Banners | GET | `/api/banners` | Banner list |
+| Ads | GET | `/api/ads` | Ad list |
 
 ## Student Portal APIs
 
@@ -382,11 +402,11 @@ Profile picture update after upload:
 
 ## Test Logins
 
-Use a real student and teacher created in the admin panel because login checks the live database user table.
+Use a real student and teacher created through the API because login checks the JSON-backed `students`, `teachers`, `staff`, and `users` stores.
 
 ```text
-Student test login: create/select one Student record in Admin > Students and share its username/password with the app developer.
-Teacher test login: create/select one Teacher record in Admin > Teachers and share its username/password with the app developer.
+Student test login: create one record with POST /api/students and share its username/password with the app developer.
+Teacher test login: create one record with POST /api/teachers and share its username/password with the app developer.
 ```
 
 Do not hard-code public test credentials in the app build. Replace these placeholders before sharing:
@@ -423,6 +443,5 @@ POST requests return the saved record plus the updated list:
 
 - Use `https://YOUR-DOMAIN.com/api` as the app base URL after deployment.
 - Do not use browser `localStorage` data in the mobile app. Use these APIs.
-- Core records such as students, teachers, fees, attendance, messages, and notices are served by backend routes.
-- Mobile support modules such as results, syllabus, uploaded lectures, quizzes, leave requests, complaints, assigned classes, and about software persist under `data/mobile_api_store`.
+- Core records such as students, teachers, fees, attendance, messages, notices, events, results, syllabus, uploaded lectures, quizzes, leave requests, complaints, assigned classes, and about software persist under `data/mobile_api_store`.
 - CORS is enabled for mobile and external clients.

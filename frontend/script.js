@@ -1880,7 +1880,15 @@ function normalizeTeacherDesignation(designationValue = '', groupKeyValue = '') 
     const groupKey = String(groupKeyValue || '').trim().toLowerCase();
 
     if (designation === 'superadmin' || designation === 'super admin' || designation === 'super_admin' || groupKey === 'superadmin' || groupKey === 'super_admin') {
-        return { designation: 'Superadmin', groupKey: 'superadmin' };
+        return { designation: 'Super admin', groupKey: 'superadmin' };
+    }
+
+    if (designation === 'accountant' || groupKey === 'accountant') {
+        return { designation: 'Accountant', groupKey: 'accountant' };
+    }
+
+    if (designation === 'principle' || designation === 'principal' || groupKey === 'principle' || groupKey === 'principal') {
+        return { designation: 'Principal', groupKey: 'principal' };
     }
 
     if (designation === 'computer operator' || designation === 'computer_operator' || designation === 'computer opetaor' || groupKey === 'computer_operator' || groupKey === 'computeroperator') {
@@ -1890,10 +1898,8 @@ function normalizeTeacherDesignation(designationValue = '', groupKeyValue = '') 
     if (
         designation === 'admin' ||
         designation === 'system administrator' ||
-        designation === 'principal' ||
         designation === 'branch manager' ||
         groupKey === 'admin' ||
-        groupKey === 'principal' ||
         groupKey === 'branch_manager'
     ) {
         return { designation: 'Admin', groupKey: 'admin' };

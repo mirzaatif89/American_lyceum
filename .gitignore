@@ -23,6 +23,9 @@ Thumbs.db
 *.log
 npm-debug.log*
 
+# Local API data stores
+data/mobile_api_store/
+
 # Build outputs (if any)
 dist/
 build/

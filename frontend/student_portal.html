@@ -3076,6 +3076,19 @@
             }
         }
 
+        function normalizeStudentProfilePayload(payload) {
+            return payload?.student || payload;
+        }
+
+        function mergePortalRecords(remote = [], cached = []) {
+            const records = new Map();
+            [...cached, ...remote].forEach((item) => {
+                if (!item?.id) return;
+                records.set(String(item.id), { ...(records.get(String(item.id)) || {}), ...item });
+            });
+            return Array.from(records.values());
+        }
+
         function buildDiaryDownloadHtml(items = [], logoDataUrl = '', student = {}) {
             const diaryItems = Array.isArray(items) ? items : [items].filter(Boolean);
             const firstItem = diaryItems[0] || {};
@@ -3960,7 +3973,7 @@
             if (window.lucide) window.lucide.createIcons();
         }
 
-        function replyStudentComplaint(id) {
+        async function replyStudentComplaint(id) {
             const student = getCurrentPortalStudent();
             const complaints = getPortalData(COMPLAINT_KEY);
             const index = complaints.findIndex((item) => item.id === id && item.senderRole === 'Student');
@@ -3978,6 +3991,18 @@
             thread.push({ role: 'Student', name: student.fullName || loggedInUser?.fullName || 'Student', message: reply, createdAt: now });
             complaints[index] = { ...complaints[index], thread, status: 'Pending', updatedAt: now };
             localStorage.setItem(COMPLAINT_KEY, JSON.stringify(complaints));
+            try {
+                await fetch(`${API_BASE_URL}/complaints/${encodeURIComponent(id)}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(complaints[index])
+                });
+            } catch (_error) {
+                // Keep the reply visible locally if the API is temporarily unavailable.
+            }
             renderStudentComplaints(student);
             showAppAlert('Your reply has been sent.', 'Reply Sent');
         }
@@ -4032,7 +4057,7 @@
                 return;
             }
             const complaints = getPortalData(COMPLAINT_KEY);
-            complaints.push({
+            const payload = {
                 id: `COMP-${Date.now()}`,
                 senderRole: 'Student',
                 senderId: String(student.id || student.studentCode || student.rollNo || loggedInUser?.id || '').trim().toLowerCase(),
@@ -4045,12 +4070,28 @@
                 thread: [],
                 actionTaken: '',
                 createdAt: new Date().toISOString()
-            });
+            };
+            complaints.push(payload);
             try {
                 localStorage.setItem(COMPLAINT_KEY, JSON.stringify(complaints));
             } catch (_error) {
                 showAppAlert('Complaint could not be saved. The attached file may be too large.', 'Storage Full');
                 return;
+            }
+            try {
+                const response = await fetch(`${API_BASE_URL}/complaints`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json().catch(() => ({}));
+                if (!response.ok || !result?.success) throw new Error(result?.message || 'Complaint sync failed.');
+                localStorage.setItem(COMPLAINT_KEY, JSON.stringify(mergePortalRecords(result.complaints || [], complaints)));
+            } catch (_error) {
+                // Keep the complaint visible locally if the API is temporarily unavailable.
             }
             event.target.reset();
             updateStudentComplaintFileLabel();
@@ -4146,6 +4187,21 @@
             }
             renderStudentLeaveHistory(student);
             updateStudentNotifications(student);
+        }
+
+        async function loadStudentComplaints(student = getCurrentPortalStudent()) {
+            try {
+                const cached = getPortalData(COMPLAINT_KEY);
+                const response = await fetch(`${API_BASE_URL}/complaints`, {
+                    headers: authToken ? { Authorization: `Bearer ${authToken}` } : {}
+                });
+                const result = await response.json().catch(() => ({}));
+                if (!response.ok || !result?.success) throw new Error(result?.message || 'Complaints could not be loaded.');
+                localStorage.setItem(COMPLAINT_KEY, JSON.stringify(mergePortalRecords(result.complaints || [], cached)));
+            } catch (_error) {
+                // Keep cached complaints visible.
+            }
+            renderStudentComplaints(student);
         }
 
         function renderStudentLeaveHistory(student = {}) {
@@ -5793,7 +5849,7 @@
                     throw new Error('Unable to load student profile.');
                 }
 
-                const student = await response.json();
+                const student = normalizeStudentProfilePayload(await response.json());
                 await loadStudentAttendanceForPortal();
                 await loadExecutedDateSheet();
                 await loadStudentDiaryForPortal(student);
@@ -5803,6 +5859,7 @@
                 await mergeStudentFeePaymentsIntoMonthlyStore();
                 applyStudentData(student);
                 await loadStudentMessages();
+                await loadStudentComplaints(student);
                 await loadStudentLeaveRequests(student);
                 return;
             } catch (error) {
@@ -5819,6 +5876,7 @@
                     await mergeStudentFeePaymentsIntoMonthlyStore();
                     applyStudentData(fallbackStudent);
                     await loadStudentMessages();
+                    await loadStudentComplaints(fallbackStudent);
                     await loadStudentLeaveRequests(fallbackStudent);
                     return;
                 }

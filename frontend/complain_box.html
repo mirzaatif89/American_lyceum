@@ -103,6 +103,16 @@
     <script src="script.js?v=20260520-sidebar-classes-restore"></script>
     <script>
         const COMPLAINT_KEY = 'eduCore_complaints';
+        const COMPLAINT_API_BASE = (() => {
+            const isLocalhost = window.location.hostname === 'localhost' ||
+                window.location.hostname === '127.0.0.1' ||
+                window.location.hostname.startsWith('192.168.') ||
+                window.location.hostname.startsWith('10.') ||
+                window.location.hostname.startsWith('172.');
+            const backendUrl = isLocalhost ? `${window.location.protocol}//${window.location.hostname}:3000` : (window.ENV_BACKEND_URL || window.location.origin);
+            return `${backendUrl}/api`;
+        })();
+        const complaintAuthToken = sessionStorage.getItem('eduCore_token') || '';
         let activeComplaintFilter = 'Student';
         const complaintHashFilters = {
             '#student': 'Student',
@@ -113,6 +123,42 @@
         };
         function readComplaints() { try { return JSON.parse(localStorage.getItem(COMPLAINT_KEY) || '[]'); } catch (_e) { return []; } }
         function saveComplaints(items) { localStorage.setItem(COMPLAINT_KEY, JSON.stringify(items)); }
+        function mergeComplaints(remote = [], cached = []) {
+            const records = new Map();
+            [...cached, ...remote].forEach((item) => {
+                if (!item?.id) return;
+                records.set(String(item.id), { ...(records.get(String(item.id)) || {}), ...item });
+            });
+            return Array.from(records.values());
+        }
+        async function loadComplaintsFromApi() {
+            try {
+                const cached = readComplaints();
+                const response = await fetch(`${COMPLAINT_API_BASE}/complaints`, {
+                    headers: complaintAuthToken ? { Authorization: `Bearer ${complaintAuthToken}` } : {}
+                });
+                const result = await response.json().catch(() => ({}));
+                if (!response.ok || !result?.success) throw new Error(result?.message || 'Complaints could not be loaded.');
+                saveComplaints(mergeComplaints(result.complaints || [], cached));
+            } catch (_error) {
+                // Keep cached complaints visible when the API is unavailable.
+            }
+            renderComplaints();
+        }
+        async function saveComplaintToApi(item) {
+            try {
+                await fetch(`${COMPLAINT_API_BASE}/complaints/${encodeURIComponent(item.id)}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(complaintAuthToken ? { Authorization: `Bearer ${complaintAuthToken}` } : {})
+                    },
+                    body: JSON.stringify(item)
+                });
+            } catch (_error) {
+                // Local cache already contains the update.
+            }
+        }
         function esc(value) { return String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[char])); }
         function sanitizeFileName(fileName) {
             return String(fileName || 'complaint-file').trim().replace(/[\\/:*?"<>|]+/g, '-') || 'complaint-file';
@@ -195,7 +241,7 @@
             }).join('');
             if (window.lucide) window.lucide.createIcons();
         }
-        function updateComplaint(id) {
+        async function updateComplaint(id) {
             const items = readComplaints();
             const index = items.findIndex((item) => item.id === id);
             if (index < 0) return;
@@ -225,6 +271,7 @@
                 updatedAt: now
             };
             saveComplaints(items);
+            await saveComplaintToApi(items[index]);
             renderComplaints();
             showAppAlert('Complaint update saved.', 'Update Saved');
         }
@@ -232,6 +279,14 @@
             const confirmed = await showAppConfirm('Delete this complaint?', 'Delete Complaint');
             if (!confirmed) return;
             saveComplaints(readComplaints().filter((item) => item.id !== id));
+            try {
+                await fetch(`${COMPLAINT_API_BASE}/complaints/${encodeURIComponent(id)}`, {
+                    method: 'DELETE',
+                    headers: complaintAuthToken ? { Authorization: `Bearer ${complaintAuthToken}` } : {}
+                });
+            } catch (_error) {
+                // Local cache already removed the complaint.
+            }
             renderComplaints();
         }
         function applyComplaintFilter(filter) {
@@ -251,10 +306,10 @@
                 applyComplaintFilter(card.dataset.complaintFilter || 'Student');
             });
         });
-        document.getElementById('familyComplaintForm').addEventListener('submit', (event) => {
+        document.getElementById('familyComplaintForm').addEventListener('submit', async (event) => {
             event.preventDefault();
             const items = readComplaints();
-            items.push({
+            const payload = {
                 id: `CMP-${Date.now()}`,
                 senderRole: 'Family',
                 senderName: document.getElementById('familyComplaintName').value.trim(),
@@ -265,14 +320,30 @@
                 thread: [],
                 actionTaken: '',
                 createdAt: new Date().toISOString()
-            });
+            };
+            items.push(payload);
             saveComplaints(items);
+            try {
+                const response = await fetch(`${COMPLAINT_API_BASE}/complaints`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(complaintAuthToken ? { Authorization: `Bearer ${complaintAuthToken}` } : {})
+                    },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json().catch(() => ({}));
+                if (response.ok && result?.success) saveComplaints(mergeComplaints(result.complaints || [], items));
+            } catch (_error) {
+                // Local cache already contains the complaint.
+            }
             event.target.reset();
             renderComplaints();
             showAppAlert('Family complaint saved.', 'Complaint Saved');
         });
         applyComplaintHashFilter();
         if (!complaintHashFilters[String(window.location.hash || '').toLowerCase()]) renderComplaints();
+        loadComplaintsFromApi();
         window.addEventListener('hashchange', applyComplaintHashFilter);
         if (window.lucide) window.lucide.createIcons();
     </script>
