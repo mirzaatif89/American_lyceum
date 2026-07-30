@@ -8,7 +8,7 @@
       "senior_teacher": true,
       "coordinator": true,
       "student": true,
-      "staff": true,
+      "staff": false,
       "accountant": true,
       "receptionist": true,
       "office_assistant": true

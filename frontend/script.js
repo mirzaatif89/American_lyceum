@@ -1931,11 +1931,33 @@ function validateTeacherIdentityInputs({ teacherId = '', username = '', email = 
     return '';
 }
 
+function deriveDesignationGroupKey(designationValue = '', fallbackGroupKey = '') {
+    const raw = String(designationValue || '').trim().toLowerCase();
+    if (!raw) return fallbackGroupKey || 'staff';
+
+    if ([
+        'admin', 'system administrator', 'system admin', 'superadmin', 'super admin', 'administrator'
+    ].includes(raw)) {
+        return 'admin';
+    }
+    if (raw === 'accountant') return 'accountant';
+    if (raw === 'receptionist') return 'receptionist';
+    if (raw === 'office assistant' || raw === 'office_assistant') return 'office_assistant';
+    if (raw === 'principal' || raw === 'principle') return 'principal';
+    if (raw === 'branch manager' || raw === 'branch_manager') return 'branch_manager';
+    if (raw === 'teacher' || raw === 'senior teacher' || raw === 'senior_teacher' || raw === 'coordinator') return raw.replace(/\s+/g, '_');
+    return fallbackGroupKey || 'staff';
+}
+
 function getDesignationGroup(selectId, fallbackGroupKey) {
-    const select = document.getElementById(selectId);
-    if (!select) return fallbackGroupKey;
-    const option = select.options[select.selectedIndex];
-    return option?.dataset?.groupKey || fallbackGroupKey;
+    const element = document.getElementById(selectId);
+    if (!element) return fallbackGroupKey;
+    if (element.dataset?.groupKey) return element.dataset.groupKey;
+    if (element.tagName === 'SELECT') {
+        const option = element.options[element.selectedIndex];
+        if (option?.dataset?.groupKey) return option.dataset.groupKey;
+    }
+    return deriveDesignationGroupKey(element.value, fallbackGroupKey);
 }
 
 function normalizeTeacherDesignation(designationValue = '', groupKeyValue = '') {
@@ -1972,23 +1994,28 @@ function normalizeTeacherDesignation(designationValue = '', groupKeyValue = '') 
 }
 
 function setDesignationSelectValue(selectId, value, fallbackGroupKey) {
-    const select = document.getElementById(selectId);
-    if (!select) return;
+    const element = document.getElementById(selectId);
+    if (!element) return;
     const normalized = String(value || '').trim();
     if (!normalized) {
-        select.selectedIndex = 0;
+        if (element.tagName === 'SELECT') element.selectedIndex = 0;
+        else element.value = '';
         return;
     }
 
-    const existingOption = Array.from(select.options).find((option) => option.value === normalized);
-    if (!existingOption) {
-        const option = document.createElement('option');
-        option.value = normalized;
-        option.textContent = normalized;
-        option.dataset.groupKey = fallbackGroupKey;
-        select.appendChild(option);
+    if (element.tagName === 'SELECT') {
+        const existingOption = Array.from(element.options).find((option) => option.value === normalized);
+        if (!existingOption) {
+            const option = document.createElement('option');
+            option.value = normalized;
+            option.textContent = normalized;
+            option.dataset.groupKey = fallbackGroupKey;
+            element.appendChild(option);
+        }
+        element.value = normalized;
+    } else {
+        element.value = normalized;
     }
-    select.value = normalized;
 }
 
 function validateStudentIdentityInputs({ studentId = '', studentCode = '', username = '', email = '' }) {
@@ -8715,11 +8742,11 @@ async function handleStaffFormSubmit(e) {
         bankAccountTitle: document.getElementById('sBankAccountTitle').value.trim(),
         bankAccountNumber: document.getElementById('sBankAccountNumber').value.trim(),
         bankBranch: document.getElementById('sBankBranch').value.trim(),
-        username: document.getElementById('sUsername').value.trim(),
-        plainPassword: document.getElementById('sPassword').value.trim(),
-        password: document.getElementById('sPassword').value.trim(),
         role: 'Staff'
     };
+    if (existingStaff?.username) newStaff.username = existingStaff.username;
+    if (existingStaff?.password) newStaff.password = existingStaff.password;
+    if (existingStaff?.plainPassword) newStaff.plainPassword = existingStaff.plainPassword;
 
     if (isEdit) {
         const index = staff.findIndex(s => s.id === newStaff.id);
@@ -8755,8 +8782,8 @@ function renderStaff(term = '') {
     const staff = getGlobalCampusFilteredRecords(getData(STORAGE_KEY_STAFF));
     const staffSearchFields = [
         'employeeCode', 'fullName', 'fatherName', 'dob', 'designation', 'campusName',
-        'cnic', 'phone', 'email', 'address', 'gender', 'salary', 'username',
-        'plainPassword', 'bankName', 'bankAccountNumber', 'bankAccountTitle', 'bankBranch'
+        'cnic', 'phone', 'email', 'address', 'gender', 'salary',
+        'bankName', 'bankAccountNumber', 'bankAccountTitle', 'bankBranch'
     ];
     const filtered = staff.filter(s => recordMatchesSearch(s, term, staffSearchFields));
 
@@ -8824,12 +8851,6 @@ function renderStaff(term = '') {
                 <td>${getDocumentBadgesMarkup(s)}</td>
                 <td>${s.cnic || '-'}</td>
                 <td>${s.phone || '-'}</td>
-                <td class="staff-login-details">
-                    <div>
-                        <div><strong>User:</strong> ${s.username || '-'}</div>
-                        <div><strong>Pass:</strong> ${getVisibleStaffPassword(s)}</div>
-                    </div>
-                </td>
                 <td>PKR ${s.salary}</td>
                 <td>
                     <button class="action-btn btn-view" onclick="openIndividualMessageFromEncoded('${encodedStaff}', 'Staff')"><i data-lucide="message-circle" width="14"></i> Message</button>
@@ -8858,13 +8879,6 @@ function editStaff(s) {
     document.getElementById('sAddress').value = s.address || '';
     document.getElementById('sGender').value = s.gender || '';
     document.getElementById('sSalary').value = s.salary || '0';
-    if (document.getElementById('sUsername')) document.getElementById('sUsername').value = s.username || '';
-    if (document.getElementById('sPassword')) {
-        const visiblePassword = s.plainPassword && !isHashedPassword(s.plainPassword)
-            ? s.plainPassword
-            : (s.password && !isHashedPassword(s.password) ? s.password : '');
-        document.getElementById('sPassword').value = visiblePassword;
-    }
     if (document.getElementById('sBankName')) document.getElementById('sBankName').value = s.bankName || '';
     if (document.getElementById('sBankAccountTitle')) document.getElementById('sBankAccountTitle').value = s.bankAccountTitle || '';
     if (document.getElementById('sBankAccountNumber')) document.getElementById('sBankAccountNumber').value = s.bankAccountNumber || '';

@@ -5,7 +5,7 @@
     "branch": true,
     "teacher": true,
     "student": true,
-    "staff": true,
+    "staff": false,
     "branch_manager": true,
     "senior_teacher": true,
     "coordinator": true,

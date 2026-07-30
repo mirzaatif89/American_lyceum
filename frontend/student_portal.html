@@ -2619,6 +2619,10 @@
                     <div class="mini-stat-value" id="portalPendingFee">PKR 0</div>
                 </div>
                 <div class="mini-stat">
+                    <div class="mini-stat-label">Remaining Charges</div>
+                    <div class="mini-stat-value" id="portalRemainingCharges">PKR 0</div>
+                </div>
+                <div class="mini-stat">
                     <div class="mini-stat-label">Fee Frequency</div>
                     <div class="mini-stat-value" id="portalFeeFrequency">-</div>
                 </div>
@@ -3393,10 +3397,12 @@
                 selectedStatus.className = `student-fee-status-pill ${monthStatus.label.toLowerCase()}`;
             }
 
+            const remainingCharges = Math.max(Number(student.remainingAmount || student.dueBalance || student.balance || 0), 0);
             setText('portalSelectedFeeMonth', selectedMonth || '-');
             setText('portalMonthlyFee', formatCurrency(feeAmount));
             setText('portalPaidFee', formatCurrency(monthStatus.paidAmount));
             setText('portalPendingFee', formatCurrency(monthStatus.pendingAmount));
+            setText('portalRemainingCharges', formatCurrency(remainingCharges));
             setText('portalSummaryMonthlyFee', formatCurrency(feeAmount));
             setText('portalSummaryPendingFee', formatCurrency(monthStatus.pendingAmount));
             setText('portalFeeFrequency', student.feeFrequency || 'Monthly');

@@ -27,17 +27,7 @@ module.exports = createHandler({
             item.plainPassword = rawPassword;
 
             await Staff.upsert(item);
-            await upsertAuthUser(User, {
-                id: `staff_${item.id}`,
-                profileId: item.id,
-                role: 'Staff',
-                username: item.username,
-                email: item.email,
-                password: item.password,
-                fullName: item.fullName,
-                plainPassword: item.plainPassword,
-                groupKey: item.groupKey || 'staff'
-            });
+            // Staff members are not allowed to login as users, so do not create auth records for them.
         }
 
         sendJson(res, 200, { success: true });

@@ -220,7 +220,7 @@
             branch: true,
             teacher: true,
             student: true,
-            staff: true
+            staff: false
         },
         roleGroups: {
             Admin: 'superadmin',
