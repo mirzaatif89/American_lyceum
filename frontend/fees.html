@@ -990,7 +990,7 @@
     </div>
 
     <script src="auth.js"></script>
-    <script src="script.js?v=20260718-dashboard-latest-revenue-month"></script>
+    <script src="script.js?v=20260730-remaining-charges-sync"></script>
     <script>
         const STORAGE_KEY_MONTHLY_FEES = 'eduCore_monthly_fees';
         const STORAGE_KEY_PAYMENT_DETAILS = 'eduCore_payment_details';
@@ -1626,7 +1626,10 @@
                 const response = await fetch(`${API_BASE_URL}/students`);
                 if (!response.ok) throw new Error('Students could not be loaded.');
                 const data = await response.json();
-                const students = typeof mergeStudentRecords === 'function' ? mergeStudentRecords(data) : data;
+                const records = typeof normalizeApiRecordList === 'function' ? normalizeApiRecordList(data, 'students') : (Array.isArray(data) ? data : (data.students || []));
+                const merged = typeof mergeStudentRecords === 'function' ? mergeStudentRecords(records, { preserveLocalOnly: false }) : records;
+                const balances = typeof loadFeeDueBalances === 'function' ? await loadFeeDueBalances() : {};
+                const students = typeof applyFeeDueBalancesToStudents === 'function' ? applyFeeDueBalancesToStudents(merged, balances) : merged;
                 localStorage.setItem(STORAGE_KEY_STUDENTS, JSON.stringify(students));
             } catch (error) {
                 console.warn('Using cached students for fees:', error.message);
@@ -2234,14 +2237,18 @@
             return result;
         }
 
-        function updateStudentRemainingAmount(studentId, currentRemainingAmount, paidAmount) {
+        async function updateStudentRemainingAmount(studentId, currentRemainingAmount, paidAmount) {
             const students = getData(STORAGE_KEY_STUDENTS);
             const idx = students.findIndex((item) => String(item.id) === String(studentId));
             if (idx === -1) return;
-            students[idx].remainingAmount = String(Math.max(Number(currentRemainingAmount || 0) - Number(paidAmount || 0), 0));
+            const nextRemainingAmount = Math.max(Number(currentRemainingAmount || 0) - Number(paidAmount || 0), 0);
+            students[idx].remainingAmount = String(nextRemainingAmount);
             saveData(STORAGE_KEY_STUDENTS, students);
             if (typeof syncToSQLDetailed === 'function') {
                 syncToSQLDetailed('students', [students[idx]]).catch(() => {});
+            }
+            if (typeof syncStudentDueBalance === 'function') {
+                await syncStudentDueBalance(studentId, nextRemainingAmount);
             }
         }
 
@@ -2319,7 +2326,7 @@
                         Number(lastMonth.paidAmount || 0) + studentRemainingCharges
                     );
                     await mergeFeePaymentsIntoMonthlyStore();
-                    updateStudentRemainingAmount(studentId, studentRemainingCharges, payment.amount);
+                    await updateStudentRemainingAmount(studentId, studentRemainingCharges, payment.amount);
                     renderMonthlyFeeRecord(studentId);
                     refreshVisibleFeeView();
                     alert('Payment added successfully.');
@@ -2376,7 +2383,7 @@
                 await mergeFeePaymentsIntoMonthlyStore();
                 const remainingChargePayment = Math.min(Math.max(parseFeeAmount(payment.amount) - monthlyDue, 0), studentRemainingCharges);
                 if (remainingChargePayment > 0) {
-                    updateStudentRemainingAmount(studentId, studentRemainingCharges, remainingChargePayment);
+                    await updateStudentRemainingAmount(studentId, studentRemainingCharges, remainingChargePayment);
                 }
 
                 renderMonthlyFeeRecord(studentId);
@@ -2415,14 +2422,7 @@
                 await mergeFeePaymentsIntoMonthlyStore();
                 const remainingChargePayment = Math.min(Math.max(parseFeeAmount(payment.amount) - remainingAmount, 0), studentRemainingCharges);
                 if (remainingChargePayment > 0) {
-                    const idx = students.findIndex((item) => String(item.id) === String(studentId));
-                    if (idx !== -1) {
-                        students[idx].remainingAmount = String(Math.max(studentRemainingCharges - remainingChargePayment, 0));
-                        saveData(STORAGE_KEY_STUDENTS, students);
-                        if (typeof syncToSQLDetailed === 'function') {
-                            syncToSQLDetailed('students', [students[idx]]).catch(() => {});
-                        }
-                    }
+                    await updateStudentRemainingAmount(studentId, studentRemainingCharges, remainingChargePayment);
                 }
                 if (month === CURRENT_MONTH_NAME && String(result?.payment?.status || '') === 'Paid') {
                     const idx = students.findIndex((item) => String(item.id) === String(studentId));

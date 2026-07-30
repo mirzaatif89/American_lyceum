@@ -435,6 +435,64 @@ function normalizeApiRecordList(payload, recordsKey) {
     return [];
 }
 
+function getAuthHeaders(extraHeaders = {}) {
+    const token = sessionStorage.getItem('eduCore_token') || '';
+    return {
+        ...extraHeaders,
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+    };
+}
+
+async function loadFeeDueBalances() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/fees/due-balances`, {
+            headers: getAuthHeaders()
+        });
+        if (!response.ok) return {};
+        const result = await parseJsonResponse(response, 'Due balances could not be loaded.');
+        return result?.balances && typeof result.balances === 'object' ? result.balances : {};
+    } catch (error) {
+        console.warn('Due balances could not be loaded:', error.message);
+        return {};
+    }
+}
+
+function applyFeeDueBalancesToStudents(students, balances = {}) {
+    if (!Array.isArray(students) || !balances || typeof balances !== 'object') return Array.isArray(students) ? students : [];
+    return students.map((student) => {
+        const studentId = String(student?.id || '').trim();
+        if (!studentId || !Object.prototype.hasOwnProperty.call(balances, studentId)) return student;
+        const balance = Number(String(balances[studentId] ?? 0).replace(/,/g, ''));
+        return {
+            ...student,
+            remainingAmount: String(Number.isFinite(balance) ? Math.max(balance, 0) : 0)
+        };
+    });
+}
+
+async function syncStudentDueBalance(studentId, remainingAmount) {
+    const id = String(studentId || '').trim();
+    if (!id) return false;
+    const amount = Number(String(remainingAmount ?? 0).replace(/,/g, ''));
+    const balance = Number.isFinite(amount) ? Math.max(amount, 0) : 0;
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/fees/due-balances`, {
+            method: 'POST',
+            headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
+            body: JSON.stringify({ studentId: id, balance, remainingAmount: balance })
+        });
+        if (!response.ok) {
+            const result = await parseJsonResponse(response, 'Due balance could not be saved.').catch(() => ({}));
+            throw new Error(result?.message || 'Due balance could not be saved.');
+        }
+        return true;
+    } catch (error) {
+        console.warn('Due balance sync failed:', error.message);
+        return false;
+    }
+}
+
 async function initialSQLSync() {
     try {
         const token = sessionStorage.getItem('eduCore_token') || '';
@@ -445,7 +503,11 @@ async function initialSQLSync() {
         if (sRes.ok) {
             const result = await parseJsonResponse(sRes, 'Students could not be loaded.');
             const data = normalizeApiRecordList(result, 'students');
-            const mergedStudents = isBranchUser ? getCurrentUserScopedRecords(data) : mergeStudentRecords(data, { preserveLocalOnly: false });
+            const balances = await loadFeeDueBalances();
+            const mergedStudents = applyFeeDueBalancesToStudents(
+                isBranchUser ? getCurrentUserScopedRecords(data) : mergeStudentRecords(data, { preserveLocalOnly: false }),
+                balances
+            );
             localStorage.setItem(STORAGE_KEY_STUDENTS, JSON.stringify(mergedStudents));
             if (typeof renderStudents === 'function') renderStudents();
             if (typeof renderStuckOffPage === 'function') renderStuckOffPage();
@@ -512,9 +574,10 @@ async function refreshStudentsFromSQL() {
 
     console.log(`API returned ${records.length} students`);
 
-    const mergedStudents = getLoggedInUser()?.role === 'Branch'
+    const mergedStudentsBase = getLoggedInUser()?.role === 'Branch'
         ? getCurrentUserScopedRecords(records)
         : mergeStudentRecords(records, { preserveLocalOnly: false });
+    const mergedStudents = applyFeeDueBalancesToStudents(mergedStudentsBase, await loadFeeDueBalances());
     console.log(`After merge: ${mergedStudents.length} students total`);
 
     localStorage.setItem(STORAGE_KEY_STUDENTS, JSON.stringify(mergedStudents));
@@ -5929,6 +5992,8 @@ async function handleStudentFormSubmit(e) {
         );
         return;
     }
+
+    await syncStudentDueBalance(localSaveResult.student.id, localSaveResult.student.remainingAmount);
 
     try {
         await refreshStudentsFromSQL();

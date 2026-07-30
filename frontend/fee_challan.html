@@ -1424,7 +1424,7 @@
     </div>
 
     <script src="auth.js"></script>
-    <script src="script.js"></script>
+    <script src="script.js?v=20260730-remaining-charges-sync"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
     <script>
         const CHALLAN_BRANCH_CONTACTS = {
@@ -1539,13 +1539,21 @@
                 const response = await fetch(`${API_BASE_URL}/students`);
                 if (!response.ok) throw new Error('Students could not be loaded.');
                 const data = await response.json();
-                const students = typeof mergeStudentRecords === 'function' ? mergeStudentRecords(data) : data;
+                const records = typeof normalizeApiRecordList === 'function' ? normalizeApiRecordList(data, 'students') : (Array.isArray(data) ? data : (data.students || []));
+                const merged = typeof mergeStudentRecords === 'function' ? mergeStudentRecords(records, { preserveLocalOnly: false }) : records;
+                const balances = typeof loadFeeDueBalances === 'function' ? await loadFeeDueBalances() : {};
+                const students = typeof applyFeeDueBalancesToStudents === 'function' ? applyFeeDueBalancesToStudents(merged, balances) : merged;
                 localStorage.setItem(STORAGE_KEY_STUDENTS, JSON.stringify(students));
                 challanStudents = [...students].sort((a, b) => (a.fullName || '').localeCompare(b.fullName || ''));
             } catch (error) {
                 challanStudents = [...getData(STORAGE_KEY_STUDENTS)].sort((a, b) => (a.fullName || '').localeCompare(b.fullName || ''));
             }
             await mergeChallanFeePaymentsIntoMonthlyStore();
+        }
+
+        function getChallanRemainingCharges(student = {}) {
+            const amount = Number(String(student?.remainingAmount || student?.dueBalance || student?.balance || 0).replace(/,/g, ''));
+            return Number.isFinite(amount) ? Math.max(amount, 0) : 0;
         }
 
         function bindChallanFilterDropdown() {
@@ -2377,13 +2385,15 @@
             const paymentDetails = JSON.parse(localStorage.getItem(CHALLAN_PAYMENT_DETAILS_KEY) || '{}');
             const studentPayments = paymentDetails[selectedStudent?.id] || {};
             const baseFee = Number.isFinite(monthlyFee) ? monthlyFee : 0;
-            const baseAmountValue = safeSelected.reduce((total, month) => {
+            const monthDueAmount = safeSelected.reduce((total, month) => {
                 const monthKey = String(month || '').trim();
                 if (!monthKey) return total;
                 const alreadyPaid = Number(studentPayments[monthKey]?.amount || 0);
                 const remainingForMonth = Math.max(baseFee - alreadyPaid, 0);
                 return total + remainingForMonth;
             }, 0);
+            const remainingCharges = Number(summary?.remainingCharges || 0);
+            const baseAmountValue = monthDueAmount + (Number.isFinite(remainingCharges) ? Math.max(remainingCharges, 0) : 0);
 
             const feeMonthInput = document.getElementById('feeMonth');
             if (feeMonthInput) {
@@ -2397,7 +2407,9 @@
             const particularsInput = document.getElementById('particulars');
             if (particularsInput) {
                 if (!safeSelected.length) {
-                    particularsInput.value = particularsInput.value || 'Dues';
+                    particularsInput.value = remainingCharges > 0 ? 'Remaining Charges' : (particularsInput.value || 'Dues');
+                } else if (remainingCharges > 0) {
+                    particularsInput.value = 'Tuition Fee + Remaining Charges';
                 } else {
                     particularsInput.value = 'Tuition Fee';
                 }
@@ -2681,9 +2693,10 @@
             }
 
             const monthlyFee = parseInt(student.monthlyFee || 0, 10) || 0;
+            const remainingCharges = getChallanRemainingCharges(student);
             const paidMonths = [];
             const pendingMonths = [];
-            let pendingAmount = 0;
+            let monthlyPendingAmount = 0;
 
             applicableMonths.forEach((month) => {
                 const paidAmount = Number(studentPayments[month]?.amount || 0);
@@ -2691,20 +2704,22 @@
                     paidMonths.push(month);
                 } else {
                     pendingMonths.push(month);
-                    pendingAmount += Math.max(monthlyFee - paidAmount, 0);
+                    monthlyPendingAmount += Math.max(monthlyFee - paidAmount, 0);
                 }
             });
 
-            if (!pendingMonths.length && (student.feesStatus || '').toLowerCase() !== 'paid') {
+            if (!pendingMonths.length && (student.feesStatus || '').toLowerCase() !== 'paid' && (monthlyFee > 0 || remainingCharges > 0)) {
                 pendingMonths.push(CHALLAN_MONTHS[currentMonthIndex]);
             }
 
             return {
                 monthlyFee,
+                remainingCharges,
                 admissionMonth: CHALLAN_MONTHS[admissionMonthIndex],
                 paidMonths,
                 pendingMonths,
-                pendingAmount
+                monthlyPendingAmount,
+                pendingAmount: monthlyPendingAmount + remainingCharges
             };
         }
 
@@ -2759,6 +2774,7 @@
             const paymentDetails = JSON.parse(localStorage.getItem(CHALLAN_PAYMENT_DETAILS_KEY) || '{}');
             const studentPayments = paymentDetails[student.id] || {};
             let totalPaidAmount = 0;
+            const remainingCharges = Number(summary?.remainingCharges || 0);
             const totalPendingAmount = Number(summary?.pendingAmount || 0);
 
             summary.paidMonths.forEach(month => {
@@ -2792,6 +2808,7 @@
                 ${impactLine ? `<div>${impactLine}</div>` : ''}
                 <div>Admission Month: <strong>${escapeHtml(summary.admissionMonth || '-')}</strong></div>
                 <div>Monthly Fee: <strong>PKR ${summary.monthlyFee.toLocaleString('en-PK')}</strong></div>
+                <div>Remaining Charges: <strong>PKR ${remainingCharges.toLocaleString('en-PK')}</strong></div>
                 <div>Paid Months: ${escapeHtml(paidDetails)} | <strong>Amount: PKR ${totalPaidAmount.toLocaleString('en-PK')}</strong></div>
                 <div>Pending Months: <strong>${pendingDetails}</strong></div>
                 <div>Pending Amount: <strong>PKR ${totalPendingAmount.toLocaleString('en-PK')}</strong></div>
@@ -3394,6 +3411,7 @@
                 const notes = document.getElementById('challanNotes').value.trim() || 'No additional instructions.';
 
                 const monthlyFee = parseInt(selectedStudent?.monthlyFee || 0, 10) || 0;
+                const remainingCharges = getChallanRemainingCharges(selectedStudent);
                 const baseAmountFallback = Number(document.getElementById('baseAmount').value || 0);
                 const paymentDetails = JSON.parse(localStorage.getItem(CHALLAN_PAYMENT_DETAILS_KEY) || '{}');
                 const studentPayments = paymentDetails[selectedStudent.id] || {};
@@ -3410,7 +3428,7 @@
 
                     const paidForThisMonth = Number(studentPayments[cleanMonth]?.amount || 0);
                     const dueForThisMonth = Math.max(monthlyFee - paidForThisMonth, 0);
-                    const baseAmount = dueForThisMonth || monthlyFee || baseAmountFallback;
+                    const baseAmount = (dueForThisMonth || monthlyFee || baseAmountFallback) + (items.length === 0 ? remainingCharges : 0);
                     const totalDue = Math.max(baseAmount + additionalCharges - discountAmount, 0);
 
                     const data = {
@@ -3432,7 +3450,7 @@
                         additionalCharges,
                         discountLabel: discountInput || '0',
                         discountAmount,
-                        particulars,
+                        particulars: remainingCharges > 0 && items.length === 0 ? `${particulars} + Remaining Charges` : particulars,
                         schoolName,
                         schoolAddress,
                         urduNote,
@@ -3623,7 +3641,7 @@
                 const paidMonthsRaw = Array.isArray(summary?.paidMonths) ? summary.paidMonths : [];
                 const paidMonths = Array.from(new Set(paidMonthsRaw.map((m) => String(m || '').trim()).filter(Boolean)));
 
-                if (statusFilter === 'pending' && (!pendingMonths.length || summary.pendingAmount <= 0)) continue;
+                if (statusFilter === 'pending' && summary.pendingAmount <= 0) continue;
                 if (statusFilter === 'paid' && !paidMonths.length) continue;
                 const paymentDetails = JSON.parse(localStorage.getItem(CHALLAN_PAYMENT_DETAILS_KEY) || '{}');
                 const studentPayments = paymentDetails[student.id] || {};
@@ -3638,7 +3656,7 @@
                 }
 
                 const monthsUnique = Array.from(new Set((monthsToProcess || []).map((m) => String(m || '').trim()).filter(Boolean)));
-                if (!monthsUnique.length) continue;
+                if (!monthsUnique.length && Number(summary?.remainingCharges || 0) <= 0) continue;
 
                 const generatedStudentId = student?.studentCode || student?.id || student?.rollNo || '';
                 const branchDetails = getChallanBranchContactDetails(student?.campusName);
@@ -3647,14 +3665,16 @@
 
                 const feeMonthLabel = monthsUnique.join(', ');
                 const challanNumber = generateBulkChallanNumber(student, monthsUnique[0] || 'Dues');
+                const remainingCharges = Number(summary?.remainingCharges || 0);
 
-                const baseAmount = statusFilter === 'paid'
-                    ? 0
-                    : monthsUnique.reduce((total, month) => {
+                const monthlyBaseAmount = monthsUnique.reduce((total, month) => {
                         const paidForThisMonth = Number(studentPayments[month]?.amount || 0);
                         const dueForThisMonth = Math.max(monthlyFee - paidForThisMonth, 0);
                         return total + (dueForThisMonth || 0);
-                    }, 0) || (monthlyFee || baseAmountFallback);
+                    }, 0);
+                const baseAmount = statusFilter === 'paid'
+                    ? 0
+                    : (monthlyBaseAmount + (Number.isFinite(remainingCharges) ? Math.max(remainingCharges, 0) : 0) || (monthlyFee || baseAmountFallback));
 
                 const totalDue = Math.max(baseAmount + additionalCharges - discountAmount, 0);
 
@@ -3670,14 +3690,14 @@
                     fatherMobile: student?.parentPhone || student?.phone || student?.fatherMobile || '-',
                     session: sessionLabel,
                     challanMonth: challanMonthLabel,
-                    feeMonth: feeMonthLabel,
+                    feeMonth: feeMonthLabel || 'Dues',
                     feeMonths: monthsUnique,
                     dueDate: dueDateLabel,
                     baseAmount,
                     additionalCharges,
                     discountLabel: discountInput || '0',
                     discountAmount,
-                    particulars,
+                    particulars: Number(remainingCharges || 0) > 0 ? `${particulars} + Remaining Charges` : particulars,
                     schoolName,
                     schoolAddress: campusAwareAddress,
                     urduNote,
@@ -3840,7 +3860,7 @@
                 const summary = getChallanStudentFeeSummary(student);
                 const monthlyFee = Number(student?.monthlyFee || 0);
                 // Student must have pending amount (not fully paid)
-                return monthlyFee > 0 && summary.pendingAmount > 0;
+                return summary.pendingAmount > 0;
             });
 
             if (!dueStudents.length) {
@@ -3882,7 +3902,7 @@
                     const summary = getChallanStudentFeeSummary(student);
                     const pendingMonthsRaw = Array.isArray(summary?.pendingMonths) ? summary.pendingMonths : [];
                     const pendingMonths = Array.from(new Set(pendingMonthsRaw.map((m) => String(m || '').trim()).filter(Boolean)));
-                    if (!pendingMonths.length) continue;
+                    if (!pendingMonths.length && Number(summary?.remainingCharges || 0) <= 0) continue;
 
                     const paymentDetails = JSON.parse(localStorage.getItem(CHALLAN_PAYMENT_DETAILS_KEY) || '{}');
                     const studentPayments = paymentDetails[student.id] || {};
@@ -3893,12 +3913,14 @@
 
                     const feeMonthCombined = pendingMonths.join(', ');
                     const challanNumber = generateBulkChallanNumber(student, pendingMonths[0] || 'Dues');
+                    const remainingCharges = Number(summary?.remainingCharges || 0);
 
-                    const baseAmount = pendingMonths.reduce((total, month) => {
+                    const monthlyBaseAmount = pendingMonths.reduce((total, month) => {
                         const paidForThisMonth = Number(studentPayments[month]?.amount || 0);
                         const dueForThisMonth = Math.max(monthlyFee - paidForThisMonth, 0);
                         return total + (dueForThisMonth || 0);
-                    }, 0) || (monthlyFee || baseAmountFallback);
+                    }, 0);
+                    const baseAmount = monthlyBaseAmount + (Number.isFinite(remainingCharges) ? Math.max(remainingCharges, 0) : 0) || (monthlyFee || baseAmountFallback);
 
                     const totalDue = Math.max(baseAmount + additionalCharges - discountAmount, 0);
 
@@ -3914,14 +3936,14 @@
                         fatherMobile: student?.parentPhone || student?.phone || student?.fatherMobile || '-',
                         session: document.getElementById('challanSession').value.trim() || '',
                         challanMonth: challanMonthLabel,
-                        feeMonth: feeMonthCombined,
+                        feeMonth: feeMonthCombined || 'Dues',
                         feeMonths: pendingMonths,
                         dueDate: dueDateLabel,
                         baseAmount,
                         additionalCharges,
                         discountLabel: discountInput || '0',
                         discountAmount,
-                        particulars,
+                        particulars: Number(remainingCharges || 0) > 0 ? `${particulars} + Remaining Charges` : particulars,
                         schoolName,
                         schoolAddress: defaultCampusAddress,
                         urduNote,

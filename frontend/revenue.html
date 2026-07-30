@@ -521,6 +521,24 @@
                             <h3 id="pendingRevenue">PKR 0</h3>
                         </div>
                     </div>
+                    <div class="rev-card">
+                        <div class="rev-icon" style="background: rgba(245, 158, 11, 0.12); color: #b45309;">
+                            <i data-lucide="badge-alert"></i>
+                        </div>
+                        <div class="rev-data">
+                            <p>Remaining Charges</p>
+                            <h3 id="remainingChargesRevenue">PKR 0</h3>
+                        </div>
+                    </div>
+                    <div class="rev-card">
+                        <div class="rev-icon" style="background: rgba(99, 102, 241, 0.12); color: #4f46e5;">
+                            <i data-lucide="calendar-clock"></i>
+                        </div>
+                        <div class="rev-data">
+                            <p>Monthly Pending</p>
+                            <h3 id="monthlyPendingRevenue">PKR 0</h3>
+                        </div>
+                    </div>
                 </div>
                 <aside class="all-months-panel">
                     <div>
@@ -685,13 +703,15 @@
                                 <th>Campus</th>
                                 <th>Status</th>
                                 <th>Paid Date</th>
+                                <th>Monthly Fee</th>
+                                <th>Remaining</th>
                                 <th>Expected</th>
                                 <th>Paid</th>
                                 <th>Pending</th>
                             </tr>
                         </thead>
                         <tbody id="monthlyStatementBody">
-                            <tr><td colspan="9" style="text-align:center; color:var(--text-secondary);">Loading statement...</td></tr>
+                            <tr><td colspan="11" style="text-align:center; color:var(--text-secondary);">Loading statement...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -740,7 +760,7 @@
     </div>
 
     <script src="auth.js"></script>
-    <script src="script.js?v=20260718-revenue-mtd-profit-loss"></script>
+    <script src="script.js?v=20260730-revenue-remaining-email"></script>
     <script>
         const STORAGE_KEY_MONTHLY_FEES = 'eduCore_monthly_fees';
         const STORAGE_KEY_REVENUE_BILLS = 'eduCore_bills';
@@ -1076,11 +1096,15 @@
                 .filter((student) => studentAppliesToRevenueMonth(student, monthMeta))
                 .map((student) => {
                     const studentId = String(student.id || '');
-                    const expected = getRevenueStudentFee(student);
+                    const monthlyFee = getRevenueStudentFee(student);
+                    const remainingCharges = Math.max(parseRevenueAmount(student.remainingAmount || student.dueBalance || student.balance || 0), 0);
+                    const expected = monthlyFee + remainingCharges;
                     const payment = paymentMap.get(studentId) || { paidAmount: 0, dates: [], statuses: [] };
                     const localPaid = !backendLoaded && monthlyFeesData?.[studentId]?.[monthMeta.monthName] === 'Paid';
-                    const paidAmount = Math.min(Math.max(payment.paidAmount || 0, localPaid ? expected : 0), expected);
+                    const paidAmount = Math.min(Math.max(payment.paidAmount || 0, localPaid ? monthlyFee : 0), expected);
+                    const monthlyPending = Math.max(monthlyFee - Math.min(paidAmount, monthlyFee), 0);
                     const pendingAmount = Math.max(expected - paidAmount, 0);
+                    const remainingPending = Math.max(pendingAmount - monthlyPending, 0);
                     const status = expected <= 0
                         ? 'Paid'
                         : (paidAmount >= expected ? 'Paid' : (paidAmount > 0 ? 'Partial' : 'Pending'));
@@ -1092,8 +1116,12 @@
                         rollNo: student.rollNo || '-',
                         campusName: student.campusName || student.branchName || student.campus || 'Main Campus',
                         expected,
+                        monthlyFee,
+                        remainingCharges,
                         paidAmount,
                         pendingAmount,
+                        monthlyPending,
+                        remainingPending,
                         status,
                         paidDate: Array.from(new Set(payment.dates)).join(', ') || '-'
                     };
@@ -1255,10 +1283,27 @@
             return { payments: [], loaded: false };
         }
 
+        async function refreshRevenueStudentsFromBackend() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/students`);
+                if (!response.ok) throw new Error('Students could not be loaded.');
+                const result = await parseJsonResponse(response, 'Students could not be loaded.');
+                const records = typeof normalizeApiRecordList === 'function' ? normalizeApiRecordList(result, 'students') : (Array.isArray(result) ? result : (result.students || []));
+                const merged = typeof mergeStudentRecords === 'function' ? mergeStudentRecords(records, { preserveLocalOnly: false }) : records;
+                const balances = typeof loadFeeDueBalances === 'function' ? await loadFeeDueBalances() : {};
+                const students = typeof applyFeeDueBalancesToStudents === 'function' ? applyFeeDueBalancesToStudents(merged, balances) : merged;
+                localStorage.setItem(STORAGE_KEY_STUDENTS, JSON.stringify(students));
+                return students;
+            } catch (error) {
+                console.warn('Revenue students could not be refreshed:', error.message);
+                return getData(STORAGE_KEY_STUDENTS);
+            }
+        }
+
         async function updateRevenueReport() {
             const currentMonthMeta = getMonthMetaFromKey(selectedRevenueMonthKey || getCurrentMonthMeta().monthKey);
-            const allStudents = getData(STORAGE_KEY_STUDENTS);
-            const students = getRevenueScopedStudents();
+            const allStudents = await refreshRevenueStudentsFromBackend();
+            const students = typeof getGlobalCampusFilteredRecords === 'function' ? getGlobalCampusFilteredRecords(allStudents) : allStudents;
             const salarySummary = getMonthlySalarySummary(currentMonthMeta.monthKey);
             const paymentResult = await fetchCollectedFeePayments();
             const feePayments = getRevenueScopedPayments(paymentResult.payments, allStudents);
@@ -1283,15 +1328,19 @@
             const totalExpected = monthlyStatementRows.reduce((sum, row) => sum + Number(row.expected || 0), 0);
             const totalCollected = monthlyStatementRows.reduce((sum, row) => sum + Number(row.paidAmount || 0), 0);
             const totalPending = monthlyStatementRows.reduce((sum, row) => sum + Number(row.pendingAmount || 0), 0);
+            const totalRemainingCharges = monthlyStatementRows.reduce((sum, row) => sum + Number(row.remainingCharges || 0), 0);
+            const totalMonthlyPending = monthlyStatementRows.reduce((sum, row) => sum + Number(row.monthlyPending || 0), 0);
 
             const classCollection = {}; // { className: { expected: 0, collected: 0 } }
 
             monthlyStatementRows.forEach((row) => {
                 if (!classCollection[row.className]) {
-                    classCollection[row.className] = { expected: 0, collected: 0 };
+                    classCollection[row.className] = { expected: 0, collected: 0, pending: 0, remaining: 0 };
                 }
                 classCollection[row.className].expected += Number(row.expected || 0);
                 classCollection[row.className].collected += Number(row.paidAmount || 0);
+                classCollection[row.className].pending += Number(row.pendingAmount || 0);
+                classCollection[row.className].remaining += Number(row.remainingCharges || 0);
             });
 
             // Update UI Stats
@@ -1314,6 +1363,8 @@
             document.getElementById('expectedRevenue').innerText = formatRevenueMoney(totalExpected);
             document.getElementById('collectedRevenue').innerText = formatRevenueMoney(totalCollected);
             document.getElementById('pendingRevenue').innerText = formatRevenueMoney(totalPending);
+            document.getElementById('remainingChargesRevenue').innerText = formatRevenueMoney(totalRemainingCharges);
+            document.getElementById('monthlyPendingRevenue').innerText = formatRevenueMoney(totalMonthlyPending);
             document.getElementById('salaryBudget').innerText = formatRevenueMoney(salarySummary.expected);
             document.getElementById('transferredSalaries').innerText = formatRevenueMoney(salarySummary.transferred);
             document.getElementById('pendingSalaries').innerText = formatRevenueMoney(salarySummary.pending);
@@ -1359,7 +1410,7 @@
                     row.innerHTML = `
                         <div class="bar-label">
                             <span class="class-name">${className}</span>
-                            <span class="amount-display">PKR ${data.collected.toLocaleString()} / ${data.expected.toLocaleString()}</span>
+                            <span class="amount-display">${formatRevenueMoney(data.collected)} / ${formatRevenueMoney(data.expected)} | Pending ${formatRevenueMoney(data.pending)} | Remaining ${formatRevenueMoney(data.remaining)}</span>
                         </div>
                         <div class="bar-bg">
                             <div class="bar-fill" style="width: ${pct}%"></div>
@@ -1395,7 +1446,7 @@
             document.getElementById('statementPendingAmount').textContent = formatRevenueMoney(pendingAmount);
 
             if (!rows.length) {
-                tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; color:var(--text-secondary);">No statement records found for selected filters.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="11" style="text-align:center; color:var(--text-secondary);">No statement records found for selected filters.</td></tr>';
                 return;
             }
 
@@ -1411,6 +1462,8 @@
                             <td>${escapeHtml(row.campusName)}</td>
                             <td><span class="statement-status ${statusClass}">${escapeHtml(row.status)}</span></td>
                             <td>${escapeHtml(row.paidDate)}</td>
+                            <td>${formatRevenueMoney(row.monthlyFee)}</td>
+                            <td>${formatRevenueMoney(row.remainingCharges)}</td>
                             <td>${formatRevenueMoney(row.expected)}</td>
                             <td>${formatRevenueMoney(row.paidAmount)}</td>
                             <td>${formatRevenueMoney(row.pendingAmount)}</td>

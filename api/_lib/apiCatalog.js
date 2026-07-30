@@ -124,6 +124,7 @@ const apiCatalog = {
 
         { method: 'GET', path: '/api/email/config', auth: true, group: 'Utilities', description: 'SMTP config status.' },
         { method: 'POST', path: '/api/email/send', auth: true, group: 'Utilities', description: 'Send email.' },
+        { method: 'POST', path: '/api/email/execute-all', auth: true, group: 'Utilities', description: 'Send bulk pending fee emails.' },
         { method: 'POST', path: '/api/ai-chat', auth: true, group: 'Utilities', description: 'AI chat with school context.' },
         { method: 'GET', path: '/api/catalog', auth: false, group: 'Developer', description: 'Machine-readable API catalog.' },
         { method: 'GET', path: '/api/mobile-api-list', auth: false, group: 'Developer', description: 'Alias for API catalog.' }

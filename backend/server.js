@@ -10,6 +10,7 @@ const jwt = require('jsonwebtoken');
 const mysql = require('mysql2/promise');
 const QRCode = require('qrcode');
 const { getSmtpConfig, sendSmtpEmail } = require('../api/_lib/mailer');
+const { buildFeeReminderEmail } = require('../api/_lib/emailTemplate');
 const apiCatalog = require('../api/_lib/apiCatalog');
 const { normalizeJsonUpload, parseMultipart, saveUploadedFile } = require('../api/_lib/uploadFile');
 
@@ -2465,6 +2466,53 @@ app.get('/api/fees/due-balances', async (req, res) => {
     }
 });
 
+app.post('/api/fees/due-balances', async (req, res) => {
+    if (!sequelize) {
+        return res.status(503).json({ success: false, message: 'Database offline' });
+    }
+
+    try {
+        const FeeDueBalance = sequelize.models.FeeDueBalance;
+        if (!FeeDueBalance) {
+            return res.status(503).json({ success: false, message: 'Due balance model is not available.' });
+        }
+
+        const studentId = String(req.body?.studentId || req.body?.id || '').trim();
+        const rawBalance = String(req.body?.balance ?? req.body?.remainingAmount ?? 0).replace(/,/g, '');
+        const parsedBalance = Number(rawBalance);
+        const balance = Number.isFinite(parsedBalance) ? Math.max(parsedBalance, 0) : 0;
+        if (!studentId) {
+            return res.status(400).json({ success: false, message: 'studentId is required.' });
+        }
+
+        await FeeDueBalance.upsert({
+            studentId,
+            balance,
+            updatedAtLabel: new Date().toLocaleString('en-GB')
+        });
+
+        const rows = await FeeDueBalance.findAll();
+        const balances = rows.reduce((acc, row) => {
+            const rowStudentId = String(row.studentId || '').trim();
+            if (!rowStudentId) return acc;
+            const rowBalance = Number(row.balance || 0);
+            acc[rowStudentId] = Number.isFinite(rowBalance) ? rowBalance : 0;
+            return acc;
+        }, {});
+
+        return res.json({
+            success: true,
+            dueBalance: { studentId, balance },
+            balances
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message || 'Due balance could not be saved.'
+        });
+    }
+});
+
 app.get('/api/fees/pay/:token', async (req, res) => {
     if (!sequelize) {
         return res.status(503).send(renderFeePaymentPage({
@@ -2900,6 +2948,98 @@ app.post('/api/email/send', authenticateToken, async (req, res) => {
         res.status(error.statusCode || 500).json({
             success: false,
             message: error.message || 'Email could not be sent.'
+        });
+    }
+});
+
+app.post('/api/email/execute-all', authenticateToken, async (req, res) => {
+    if (!sequelize) {
+        return res.status(503).json({ success: false, message: 'Database offline' });
+    }
+
+    try {
+        const { Student, FeePayment, FeeDueBalance } = sequelize.models;
+        const students = await Student.findAll();
+        const payments = FeePayment ? await FeePayment.findAll() : [];
+        const dueRows = FeeDueBalance ? await FeeDueBalance.findAll() : [];
+        const dueMap = new Map(dueRows.map((row) => [String(row.studentId || ''), Number(row.balance || 0) || 0]));
+        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        const currentMonth = months[new Date().getMonth()];
+        const currentLower = currentMonth.toLowerCase();
+        const currentShort = currentMonth.slice(0, 3).toLowerCase();
+        const paidByStudent = new Map();
+
+        payments.forEach((payment) => {
+            if (!['paid', 'partial'].includes(String(payment.status || '').toLowerCase())) return;
+            if (String(payment.paymentSource || '').toLowerCase().includes('fine')) return;
+            const feeMonth = String(payment.feeMonth || '').toLowerCase();
+            if (!feeMonth.includes(currentLower) && !feeMonth.includes(currentShort)) return;
+            const studentId = String(payment.studentId || '');
+            paidByStudent.set(studentId, (paidByStudent.get(studentId) || 0) + (Number(payment.amount || 0) || 0));
+        });
+
+        const schoolName = getSmtpConfig().fromName || 'American Lyceum School';
+        const result = { pendingFees: { sent: 0, failed: 0, skipped: 0, errors: [] }, birthdays: { sent: 0, failed: 0 }, specialNotices: { sent: 0, failed: 0 } };
+
+        for (const row of students) {
+            const student = row.toJSON ? row.toJSON() : row;
+            const email = String(student.email || '').trim();
+            const status = String(student.enrollmentStatus || student.feesStatus || '').toLowerCase();
+            if (!email || status.includes('terminated')) {
+                result.pendingFees.skipped += 1;
+                continue;
+            }
+
+            const monthlyFee = Number(String(student.monthlyFee || student.fee || 0).replace(/,/g, '')) || 0;
+            const storedDue = dueMap.has(String(student.id || ''))
+                ? dueMap.get(String(student.id || ''))
+                : Number(String(student.remainingAmount || 0).replace(/,/g, ''));
+            const remainingCharges = Math.max(Number(storedDue || 0), 0);
+            const paidAmount = paidByStudent.get(String(student.id || '')) || 0;
+            const monthlyPending = Math.max(monthlyFee - paidAmount, 0);
+            const totalPending = monthlyPending + remainingCharges;
+            if (!(totalPending > 0)) {
+                result.pendingFees.skipped += 1;
+                continue;
+            }
+
+            try {
+                const emailBody = buildFeeReminderEmail({
+                    schoolName,
+                    student,
+                    currentMonth,
+                    monthlyPending,
+                    remainingCharges,
+                    totalPending
+                });
+                await sendSmtpEmail({
+                    to: email,
+                    subject: `${schoolName} Fee Reminder - ${currentMonth}`,
+                    text: emailBody.text,
+                    html: emailBody.html
+                });
+                result.pendingFees.sent += 1;
+            } catch (error) {
+                result.pendingFees.failed += 1;
+                result.pendingFees.errors.push({
+                    studentId: student.id || '',
+                    email,
+                    message: error.message || 'Email failed.'
+                });
+            }
+        }
+
+        return res.json({
+            success: true,
+            message: result.pendingFees.failed ? 'Some emails failed.' : 'Emails executed successfully.',
+            totalSent: result.pendingFees.sent,
+            totalFailed: result.pendingFees.failed,
+            result
+        });
+    } catch (error) {
+        return res.status(error.statusCode || 500).json({
+            success: false,
+            message: error.message || 'Emails could not be executed.'
         });
     }
 });
@@ -3356,9 +3496,25 @@ function defineStudentModel(db) {
         rollNo: DataTypes.STRING,
         formB: DataTypes.STRING,
         monthlyFee: DataTypes.STRING,
+        monthlyFeeCustom: DataTypes.BOOLEAN,
+        freeStudy: DataTypes.BOOLEAN,
+        zeroFeeReason: DataTypes.TEXT,
+        remainingAmount: DataTypes.STRING,
+        dueBalance: DataTypes.STRING,
+        balance: DataTypes.STRING,
         feeFrequency: DataTypes.STRING,
         feesStatus: { type: DataTypes.STRING, defaultValue: 'Pending' },
+        enrollmentStatus: DataTypes.STRING,
         paymentDate: DataTypes.STRING,
+        address: DataTypes.TEXT,
+        guardianName: DataTypes.STRING,
+        guardianContact: DataTypes.STRING,
+        fingerprintData: DataTypes.TEXT('long'),
+        familyId: DataTypes.STRING,
+        familyName: DataTypes.STRING,
+        familyNo: DataTypes.STRING,
+        familyContact: DataTypes.STRING,
+        familyAddedAt: DataTypes.STRING,
         username: { type: DataTypes.STRING, unique: true },
         password: DataTypes.STRING,
         plainPassword: DataTypes.STRING,
@@ -3795,9 +3951,25 @@ async function ensureLegacySchema() {
         rollNo: { type: DataTypes.STRING, allowNull: true },
         formB: { type: DataTypes.STRING, allowNull: true },
         monthlyFee: { type: DataTypes.STRING, allowNull: true },
+        monthlyFeeCustom: { type: DataTypes.BOOLEAN, allowNull: true },
+        freeStudy: { type: DataTypes.BOOLEAN, allowNull: true },
+        zeroFeeReason: { type: DataTypes.TEXT, allowNull: true },
+        remainingAmount: { type: DataTypes.STRING, allowNull: true },
+        dueBalance: { type: DataTypes.STRING, allowNull: true },
+        balance: { type: DataTypes.STRING, allowNull: true },
         feeFrequency: { type: DataTypes.STRING, allowNull: true },
         feesStatus: { type: DataTypes.STRING, allowNull: true },
+        enrollmentStatus: { type: DataTypes.STRING, allowNull: true },
         paymentDate: { type: DataTypes.STRING, allowNull: true },
+        address: { type: DataTypes.TEXT, allowNull: true },
+        guardianName: { type: DataTypes.STRING, allowNull: true },
+        guardianContact: { type: DataTypes.STRING, allowNull: true },
+        fingerprintData: { type: DataTypes.TEXT('long'), allowNull: true },
+        familyId: { type: DataTypes.STRING, allowNull: true },
+        familyName: { type: DataTypes.STRING, allowNull: true },
+        familyNo: { type: DataTypes.STRING, allowNull: true },
+        familyContact: { type: DataTypes.STRING, allowNull: true },
+        familyAddedAt: { type: DataTypes.STRING, allowNull: true },
         username: { type: DataTypes.STRING, allowNull: true },
         password: { type: DataTypes.STRING, allowNull: true },
         plainPassword: { type: DataTypes.STRING, allowNull: true },

@@ -142,7 +142,7 @@
     </div>
 
     <script src="auth.js?v=20260520-sidebar-requested-order"></script>
-    <script src="script.js?v=20260705-search-fix"></script>
+    <script src="script.js?v=20260730-remaining-charges-sync"></script>
     <script>
         const REMAINING_MONTHLY_KEY = 'eduCore_monthly_fees';
         const REMAINING_PAYMENT_KEY = 'eduCore_payment_details';
@@ -264,7 +264,13 @@
                 fetchRemainingData('fees/payments', { payments: [] })
             ]);
 
-            const students = Array.isArray(studentsResult) ? studentsResult : (studentsResult.students || []);
+            const studentRecords = typeof normalizeApiRecordList === 'function'
+                ? normalizeApiRecordList(studentsResult, 'students')
+                : (Array.isArray(studentsResult) ? studentsResult : (studentsResult.students || []));
+            const dueBalances = typeof loadFeeDueBalances === 'function' ? await loadFeeDueBalances() : {};
+            const students = typeof applyFeeDueBalancesToStudents === 'function'
+                ? applyFeeDueBalancesToStudents(studentRecords, dueBalances)
+                : studentRecords;
             if (students.length) localStorage.setItem('eduCore_students', JSON.stringify(students));
 
             const payments = Array.isArray(paymentsResult?.payments) ? paymentsResult.payments : [];
