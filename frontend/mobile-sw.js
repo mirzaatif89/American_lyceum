@@ -4,7 +4,8 @@ const PRECACHE_URLS = [
     '/mobile.css?v=20260730-animated-shell-1',
     '/mobile.js?v=20260730-animated-shell-1',
     '/mobile.webmanifest',
-    '/images/logo.jpeg'
+    '/images/logo.jpeg',
+    '/images/mobile_app_icon.jpeg'
 ];
 
 self.addEventListener('install', (event) => {
