@@ -1,3 +1,11 @@
+if (window.Capacitor?.isNativePlatform?.()) {
+    document.documentElement.classList.add('edu-native-app');
+    const nativeStyles = document.createElement('link');
+    nativeStyles.rel = 'stylesheet';
+    nativeStyles.href = '/mobile-app-overrides.css?v=20260731-native-1';
+    document.head.appendChild(nativeStyles);
+}
+
 // === KEYS ===
 const STORAGE_KEY_STUDENTS = 'eduCore_students';
 const STORAGE_KEY_TEACHERS = 'eduCore_teachers';

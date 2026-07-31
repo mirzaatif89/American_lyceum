@@ -1,0 +1,178 @@
+/* Native Android/iOS shell overrides. Desktop web styling remains unchanged. */
+html.edu-native-app,
+html.edu-native-app body {
+    width: 100% !important;
+    min-height: 100% !important;
+    height: auto !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+html.edu-native-app body {
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html.edu-native-app .dashboard-container {
+    position: relative !important;
+    inset: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 100dvh !important;
+    overflow: visible !important;
+}
+
+html.edu-native-app .dashboard-container .sidebar {
+    position: sticky !important;
+    top: env(safe-area-inset-top, 0px) !important;
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 0.65rem !important;
+    z-index: 3000;
+}
+
+html.edu-native-app .dashboard-container .logo-section {
+    min-height: 48px !important;
+    margin-bottom: 0.5rem !important;
+    padding: 0.4rem 0.6rem !important;
+}
+
+html.edu-native-app .dashboard-container .nav-links {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 0.45rem !important;
+    margin: 0 !important;
+    padding: 0 0 0.15rem !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+}
+
+html.edu-native-app .dashboard-container :is(.nav-item, .nav-subitem, .nav-dropdown) {
+    flex: 0 0 auto !important;
+    scroll-snap-align: start;
+}
+
+html.edu-native-app .dashboard-container .nav-submenu {
+    max-height: 55dvh;
+    overflow-y: auto;
+}
+
+html.edu-native-app .dashboard-container .user-profile {
+    display: none !important;
+}
+
+html.edu-native-app .dashboard-container .main-content {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 0.8rem !important;
+    overflow: visible !important;
+}
+
+html.edu-native-app :is(.stats-grid, .cards-grid, .dashboard-grid, .form-grid, .mini-grid, .action-steps) {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
+}
+
+html.edu-native-app :is(.card, .panel-card, .form-container, .settings-card, .step-panel, .module-panel) {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 16px !important;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08) !important;
+}
+
+html.edu-native-app :is(.header, .toolbar, .table-header, .form-actions, .header-actions) {
+    width: 100% !important;
+    align-items: stretch !important;
+    flex-direction: column !important;
+    gap: 0.7rem !important;
+}
+
+html.edu-native-app :is(.btn, .form-actions .btn, .toolbar .btn, .search-bar) {
+    width: 100% !important;
+    max-width: none !important;
+    min-height: 44px;
+}
+
+html.edu-native-app .table-container,
+html.edu-native-app .portal-table-wrap {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+    -webkit-overflow-scrolling: touch;
+}
+
+html.edu-native-app :is(.modal-overlay, .login-modal, .success-overlay) {
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+}
+
+html.edu-native-app :is(.modal-content, .login-modal-content, .success-modal) {
+    max-height: calc(100dvh - 1.5rem) !important;
+    overflow-y: auto !important;
+}
+
+html.edu-native-app .login-layout {
+    height: auto !important;
+    min-height: 100dvh !important;
+    padding: max(1rem, env(safe-area-inset-top, 0px)) 1rem max(1rem, env(safe-area-inset-bottom, 0px)) !important;
+    overflow-y: auto !important;
+}
+
+html.edu-native-app :is(.teacher-portal, .portal-container, .portal-shell) {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+}
+
+html.edu-native-app :is(.teacher-options, .student-action-grid, .portal-shell > .stats-grid) {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.65rem !important;
+}
+
+html.edu-native-app :is(.teacher-option-btn, .student-action-btn) {
+    min-height: 78px !important;
+    border-radius: 18px !important;
+}
+
+html.edu-native-app.teacher-panel-open,
+html.edu-native-app.student-panel-open,
+html.edu-native-app body.teacher-panel-open,
+html.edu-native-app body.student-panel-open {
+    overflow-y: auto !important;
+}
+
+html.edu-native-app :is(.teacher-option-panel.portal-screen-active, .student-portal-section.portal-screen-active) {
+    height: auto !important;
+    min-height: 100dvh !important;
+    overflow-y: visible !important;
+}
+
+@media (max-width: 380px) {
+    html.edu-native-app :is(.teacher-options, .student-action-grid, .portal-shell > .stats-grid) {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html.edu-native-app *,
+    html.edu-native-app *::before,
+    html.edu-native-app *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

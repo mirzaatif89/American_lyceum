@@ -1,3 +1,14 @@
+if (window.Capacitor?.isNativePlatform?.()) {
+    document.documentElement.classList.add('edu-native-app');
+    if (!document.querySelector('link[data-native-mobile-styles]')) {
+        const nativeStyles = document.createElement('link');
+        nativeStyles.rel = 'stylesheet';
+        nativeStyles.href = '/mobile-app-overrides.css?v=20260731-native-1';
+        nativeStyles.dataset.nativeMobileStyles = 'true';
+        document.head.appendChild(nativeStyles);
+    }
+}
+
 (function installAppPopups() {
     if (window.showAppAlert && window.showAppConfirm) return;
 

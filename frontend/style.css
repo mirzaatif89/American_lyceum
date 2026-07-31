@@ -420,7 +420,7 @@ ul {
 
 .logo-section {
     display: grid;
-    grid-template-columns: 38px minmax(0, 1fr);
+    grid-template-columns: 44px minmax(0, 1fr);
     align-items: center;
     justify-content: center;
     gap: 0.55rem;
@@ -438,14 +438,15 @@ ul {
 
 .sidebar .logo-section::before {
     content: "";
-    width: 36px;
-    height: 36px;
+    width: 42px;
+    height: 42px;
     border-radius: 8px;
     background-color: #fbf7fd;
-    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8 15.5L20 9L32 15.5L20 22L8 15.5Z' fill='%2343206f'/%3E%3Cpath d='M13 19V25.5C13 27.8 16.1 30 20 30C23.9 30 27 27.8 27 25.5V19' stroke='%232b124d' stroke-width='2.2' stroke-linecap='round'/%3E%3Cpath d='M32 16V24' stroke='%23d9272f' stroke-width='2.2' stroke-linecap='round'/%3E%3Ccircle cx='32' cy='26.5' r='2.4' fill='%23d9272f'/%3E%3C/svg%3E");
+    background-image: url("images/mobile_app_icon.jpeg");
     background-position: center;
     background-repeat: no-repeat;
-    background-size: 31px 31px;
+    background-size: cover;
+    border: 2px solid rgba(255, 255, 255, 0.78);
     box-shadow: 0 10px 22px rgba(0, 0, 0, 0.18);
 }
 
