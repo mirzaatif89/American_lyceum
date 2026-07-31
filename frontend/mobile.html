@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#07111f">
+    <meta name="mobile-api-base" content="https://alis.eduzeeno.com">
+    <title>American Lyceum Mobile</title>
+    <link rel="icon" type="image/png" href="images/logo.jpeg">
+    <link rel="manifest" href="mobile.webmanifest">
+    <link rel="stylesheet" href="mobile.css?v=20260730-animated-shell-1">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+    <div class="mobile-stage">
+        <div class="aurora aurora-one"></div>
+        <div class="aurora aurora-two"></div>
+        <div class="grain"></div>
+
+        <header class="mobile-topbar">
+            <a class="brand-chip" href="/index.html" aria-label="American Lyceum home">
+                <img src="images/logo.jpeg" alt="American Lyceum logo">
+                <span>
+                    <strong>American Lyceum</strong>
+                    <small>Live Mobile ERP</small>
+                </span>
+            </a>
+            <div class="topbar-actions">
+                <span class="status-pill" id="connectionStatus"><i data-lucide="wifi"></i> Checking</span>
+                <button class="ghost-button hidden" id="logoutButton" type="button">Logout</button>
+            </div>
+        </header>
+
+        <main class="mobile-shell">
+            <section class="hero-panel panel" id="heroPanel">
+                <div class="hero-copy">
+                    <p class="eyebrow">School management in one app</p>
+                    <h1>Login, open modules, and manage the full ERP on mobile.</h1>
+                    <p class="hero-text">
+                        Teacher, student, admin, super admin, and accountant users can sign in from this single app.
+                        After login, the dashboard shows the exact pages your role can access.
+                    </p>
+                    <div class="hero-points">
+                        <span><i data-lucide="sparkles"></i> Animated mobile UI</span>
+                        <span><i data-lucide="shield-check"></i> Role-based access</span>
+                        <span><i data-lucide="wallet"></i> Finance ready</span>
+                    </div>
+                </div>
+
+                <div class="login-card">
+                    <div class="login-card-head">
+                        <div>
+                            <p class="card-kicker">Secure Sign In</p>
+                            <h2>Open your role dashboard</h2>
+                        </div>
+                        <div class="floating-badge">
+                            <i data-lucide="smartphone"></i>
+                        </div>
+                    </div>
+
+                    <form id="mobileLoginForm" class="login-form">
+                        <label>
+                            Username / Email
+                            <input type="text" id="mobileUsername" autocomplete="username" placeholder="Enter username or email" required>
+                        </label>
+                        <label>
+                            Password
+                            <div class="password-field">
+                                <input type="password" id="mobilePassword" autocomplete="current-password" placeholder="Enter password" required>
+                                <button type="button" class="icon-button" id="togglePasswordButton" aria-label="Show password">
+                                    <i data-lucide="eye"></i>
+                                </button>
+                            </div>
+                        </label>
+
+                        <div class="login-row">
+                            <label class="checkbox-row">
+                                <input type="checkbox" id="mobileRemember">
+                                <span>Remember me</span>
+                            </label>
+                            <a href="/login.html">Full web login</a>
+                        </div>
+
+                        <button type="submit" class="primary-button" id="loginButton">
+                            <span>Sign In</span>
+                            <i data-lucide="arrow-right"></i>
+                        </button>
+                        <p class="form-status" id="loginStatus" aria-live="polite"></p>
+                    </form>
+                </div>
+            </section>
+
+            <section class="dashboard-panel panel hidden" id="dashboardPanel">
+                <div class="dashboard-head">
+                    <div>
+                        <p class="card-kicker">Welcome back</p>
+                        <h2 id="welcomeTitle">Dashboard</h2>
+                        <p class="hero-text" id="welcomeSubtitle"></p>
+                    </div>
+                    <div class="dashboard-head-actions">
+                        <button class="secondary-button" id="openFullErpButton" type="button">
+                            <i data-lucide="layers-3"></i>
+                            Open Full ERP
+                        </button>
+                    </div>
+                </div>
+
+                <div class="profile-card">
+                    <div class="profile-avatar" id="profileAvatar">AL</div>
+                    <div class="profile-copy">
+                        <strong id="profileName">User</strong>
+                        <span id="profileMeta">Role</span>
+                        <div class="profile-chips">
+                            <span class="profile-chip" id="profileRoleChip">Role</span>
+                            <span class="profile-chip" id="profileCampusChip">Campus</span>
+                            <span class="profile-chip" id="profileGroupChip">Group</span>
+                        </div>
+                    </div>
+                </div>
+
+                <section class="stats-grid" id="statsGrid"></section>
+
+                <section class="module-section" id="moduleSection">
+                    <div class="section-head">
+                        <div>
+                            <p class="card-kicker">Quick access</p>
+                            <h3 id="moduleSectionTitle">Modules</h3>
+                        </div>
+                        <input type="search" id="moduleSearch" placeholder="Search module">
+                    </div>
+                    <div class="module-grid" id="moduleGrid"></div>
+                </section>
+
+                <section class="insights-grid">
+                    <article class="insight-card">
+                        <div class="insight-icon"><i data-lucide="shield"></i></div>
+                        <div>
+                            <strong>Role aware</strong>
+                            <p>Admin, super admin, teacher, student, and accountant users see different modules automatically.</p>
+                        </div>
+                    </article>
+                    <article class="insight-card">
+                        <div class="insight-icon"><i data-lucide="activity"></i></div>
+                        <div>
+                            <strong>Live session</strong>
+                            <p>The app keeps your session active with the backend heartbeat and logs out safely when needed.</p>
+                        </div>
+                    </article>
+                </section>
+            </section>
+        </main>
+
+        <nav class="bottom-nav hidden" id="bottomNav">
+            <button type="button" class="nav-item active" data-nav-target="dashboardPanel">
+                <i data-lucide="home"></i>
+                <span>Home</span>
+            </button>
+            <button type="button" class="nav-item" data-nav-target="moduleSection">
+                <i data-lucide="grid-2x2"></i>
+                <span>Modules</span>
+            </button>
+            <button type="button" class="nav-item" id="bottomFinanceButton">
+                        <i data-lucide="wallet"></i>
+                        <span>Finance</span>
+                    </button>
+            <button type="button" class="nav-item" id="bottomLogoutButton">
+                <i data-lucide="log-out"></i>
+                <span>Logout</span>
+            </button>
+        </nav>
+    </div>
+
+    <script src="mobile.js?v=20260730-animated-shell-1"></script>
+    <script>
+        if (window.lucide) window.lucide.createIcons();
+    </script>
+</body>
+
+</html>
