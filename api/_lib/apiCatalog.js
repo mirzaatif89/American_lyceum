@@ -1,5 +1,5 @@
 const apiCatalog = {
-    project: 'American Lyceum CRM',
+    project: 'American Lyceum International School Sharaqpur Campus CRM',
     audience: 'External mobile app developer',
     note: 'Use these backend APIs only. The mobile-app folder in this repo is not required for external app development.',
     baseUrlExamples: [

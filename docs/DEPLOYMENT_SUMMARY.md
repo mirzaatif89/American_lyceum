@@ -94,5 +94,5 @@ https://your-backend.onrender.com
 
 ---
 
-Created by American Lyceum
+Created by American Lyceum International School Sharaqpur Campus
 Last updated: 2026

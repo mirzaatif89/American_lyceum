@@ -1,12 +1,12 @@
 {
-  "name": "American Lyceum Mobile",
+  "name": "American Lyceum International School Sharaqpur Campus Mobile",
   "short_name": "AL Mobile",
   "start_url": "/mobile.html",
   "scope": "/",
   "display": "standalone",
   "background_color": "#07111f",
   "theme_color": "#07111f",
-  "description": "Role-based mobile ERP for American Lyceum.",
+  "description": "Role-based mobile ERP for American Lyceum International School Sharaqpur Campus.",
   "icons": [
     {
       "src": "/icons/icon-192.webp",

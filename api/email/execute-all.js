@@ -27,7 +27,7 @@ module.exports = createHandler({
             paidByStudent.set(studentId, (paidByStudent.get(studentId) || 0) + (Number(payment.amount || 0) || 0));
         });
 
-        const schoolName = getSmtpConfig().fromName || 'American Lyceum School';
+        const schoolName = getSmtpConfig().fromName || 'American Lyceum International School Sharaqpur Campus';
         const result = { pendingFees: { sent: 0, failed: 0, skipped: 0, errors: [] }, birthdays: { sent: 0, failed: 0 }, specialNotices: { sent: 0, failed: 0 } };
 
         for (const row of students) {

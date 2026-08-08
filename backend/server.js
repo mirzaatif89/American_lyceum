@@ -2978,7 +2978,7 @@ app.post('/api/email/execute-all', authenticateToken, async (req, res) => {
             paidByStudent.set(studentId, (paidByStudent.get(studentId) || 0) + (Number(payment.amount || 0) || 0));
         });
 
-        const schoolName = getSmtpConfig().fromName || 'American Lyceum School';
+        const schoolName = getSmtpConfig().fromName || 'American Lyceum International School Sharaqpur Campus';
         const result = { pendingFees: { sent: 0, failed: 0, skipped: 0, errors: [] }, birthdays: { sent: 0, failed: 0 }, specialNotices: { sent: 0, failed: 0 } };
 
         for (const row of students) {
@@ -3118,14 +3118,14 @@ app.get('/api/about-software', (_req, res) => {
         success: true,
         aboutSoftware: records[0] || {
             id: 'ABOUT-SOFTWARE',
-            appName: 'American Lyceum',
-            schoolName: 'American Lyceum School',
+            appName: 'American Lyceum International School Sharaqpur Campus',
+            schoolName: 'American Lyceum International School Sharaqpur Campus',
             website: process.env.SCHOOL_WEBSITE || 'https://americanlyceum.com/',
             supportEmail: process.env.SMTP_FROM_EMAIL || 'americanlyceumschoolsharaqpurc@gmail.com',
             supportPhone: '03174944258',
             schoolAddress: 'Main tehsil Road near post office Sharaqpur Sharif district sheikhupura',
             principalName: 'Mahmood ul Hassan',
-            description: 'Student and teacher portal APIs for American Lyceum School.',
+            description: 'Student and teacher portal APIs for American Lyceum International School Sharaqpur Campus.',
             version: '1.0.0'
         }
     });
@@ -3382,7 +3382,7 @@ function buildLocalAiAnswer(question = '', context = {}) {
 
 async function callOpenAiForSchoolAnswer(message, context) {
     const prompt = [
-        'You are American Lyceum School portal assistant.',
+        'You are American Lyceum International School Sharaqpur Campus portal assistant.',
         'Answer in the same language style as the user. Most users write Roman Urdu.',
         'Use only the provided school system context. If exact data is not present, say that it is not available in the current system snapshot.',
         'Do not expose passwords, secrets, API keys, or hidden implementation details.',

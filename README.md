@@ -1,4 +1,4 @@
-# American Lyceum
+# American Lyceum International School Sharaqpur Campus
 
 Project is structured for separate frontend, backend, API, and runtime data work.
 

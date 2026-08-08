@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Revenue Report - American Lyceum management</title>
+    <title>Revenue Report - American Lyceum International School Sharaqpur Campus management</title>
     <link rel="icon" type="image/png" href="images/logo.jpeg">
     <link rel="stylesheet" href="style.css">
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -402,7 +402,7 @@
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="logo-section">
-                <img class="sidebar-logo-img" src="images/logo.jpeg" alt="American Lyceum logo">
+                <img class="sidebar-logo-img" src="images/logo.jpeg" alt="American Lyceum International School Sharaqpur Campus logo">
             </div>
 
             <nav class="nav-links">
@@ -871,19 +871,22 @@
 
         // Define standard class mapping (same as fees.html)
         const feeClasses = [
-            { id: 'play', name: 'Play Group', keywords: ['play', 'pg', 'playgroup'] },
-            { id: 'nursery', name: 'Nursery', keywords: ['nursery', 'nursary'] },
-            { id: 'prep', name: 'Prep', keywords: ['prep', 'preschool'] },
-            { id: '1', name: 'Class One', keywords: ['1', 'one', '1st'] },
-            { id: '2', name: 'Class Two', keywords: ['2', 'two', '2nd'] },
-            { id: '3', name: 'Class Three', keywords: ['3', 'three', '3rd'] },
-            { id: '4', name: 'Class Four', keywords: ['4', 'four', '4th'] },
-            { id: '5', name: 'Class Five', keywords: ['5', 'five', '5th'] },
-            { id: '6', name: 'Class Six', keywords: ['6', 'six', '6th'] },
-            { id: '7', name: 'Class Seven', keywords: ['7', 'seven', '7th'] },
-            { id: '8', name: 'Class Eight', keywords: ['8', 'eight', '8th'] },
-            { id: '9', name: 'Class Nine', keywords: ['9', 'nine', '9th'] },
-            { id: '10', name: 'Class Ten', keywords: ['10', 'ten', '10th'] }
+            { id: 'mjb', name: 'Montessori Junior Blue', keywords: ['play', 'pg', 'playgroup', 'play group', 'montessori junior blue'] },
+            { id: 'mjr', name: 'Montessori Junior Red', keywords: ['nursery', 'nursary', 'nur', 'montessori junior red'] },
+            { id: 'mjg', name: 'Montessori Junior Green', keywords: ['prep', 'preschool', 'pre', 'montessori junior green'] },
+            { id: 'ms', name: 'Montessori Senior', keywords: ['montessori senior', 'senior'] },
+            { id: 'ma', name: 'Montessori Advance', keywords: ['montessori advance', 'advance'] },
+            { id: 'g1', name: 'Grade 1st', keywords: ['1', 'one', '1st', 'class 1', 'class one', 'grade 1', 'grade 1st'] },
+            { id: 'g2', name: 'Grade 2nd', keywords: ['2', 'two', '2nd', 'class 2', 'class two', 'grade 2', 'grade 2nd'] },
+            { id: 'g3', name: 'Grade 3rd', keywords: ['3', 'three', '3rd', 'class 3', 'class three', 'grade 3', 'grade 3rd'] },
+            { id: 'g4', name: 'Grade 4th', keywords: ['4', 'four', '4th', 'class 4', 'class four', 'grade 4', 'grade 4th'] },
+            { id: 'g5', name: 'Grade 5th', keywords: ['5', 'five', '5th', 'class 5', 'class five', 'grade 5', 'grade 5th'] },
+            { id: 'g6', name: 'Grade 6th', keywords: ['6', 'six', '6th', 'class 6', 'class six', 'grade 6', 'grade 6th'] },
+            { id: 'g7', name: 'Grade 7th', keywords: ['7', 'seven', '7th', 'class 7', 'class seven', 'grade 7', 'grade 7th'] },
+            { id: 'g8', name: 'Grade 8th', keywords: ['8', 'eight', '8th', 'class 8', 'class eight', 'grade 8', 'grade 8th'] },
+            { id: 'g9', name: 'Grade 9th', keywords: ['9', 'nine', '9th', 'class 9', 'class nine', 'grade 9', 'grade 9th'] },
+            { id: 'g10', name: 'Grade 10th', keywords: ['10', 'ten', '10th', 'class 10', 'class ten', 'grade 10', 'grade 10th'] },
+            { id: 'olevel', name: "O Level's", keywords: ['o level', 'o levels', "o level's", 'olevel', 'o-level'] }
         ];
 
         function getStandardClassName(rawClass) {
@@ -1389,13 +1392,16 @@
             const barContainer = document.getElementById('classBreakdownContainer');
             barContainer.innerHTML = '';
 
-            // Sort classes in proper order (Play Group -> Class Ten)
+            // Sort classes in proper order (Montessori -> O Level)
             const sortedClasses = feeClasses
                 .map(c => c.name)
                 .filter(name => classCollection[name] && classCollection[name].expected > 0);
             const customClasses = Object.keys(classCollection)
                 .filter(name => !sortedClasses.includes(name) && classCollection[name].expected > 0)
-                .sort((a, b) => a.localeCompare(b));
+                .sort((a, b) => {
+                    if (typeof compareStudentClassNames === 'function') return compareStudentClassNames(a, b);
+                    return a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
+                });
             const displayClasses = [...sortedClasses, ...customClasses];
 
             if (displayClasses.length === 0) {
@@ -1451,7 +1457,12 @@
             }
 
             tbody.innerHTML = rows
-                .sort((a, b) => a.className.localeCompare(b.className, undefined, { numeric: true, sensitivity: 'base' }) || a.studentName.localeCompare(b.studentName))
+                .sort((a, b) => {
+                    const classCompare = typeof compareStudentClassNames === 'function'
+                        ? compareStudentClassNames(a.className, b.className)
+                        : a.className.localeCompare(b.className, undefined, { numeric: true, sensitivity: 'base' });
+                    return classCompare || a.studentName.localeCompare(b.studentName);
+                })
                 .map((row) => {
                     const statusClass = row.status.toLowerCase();
                     return `
@@ -1500,7 +1511,10 @@
                 .filter((className) => classMap.has(className));
             const customClasses = Array.from(classMap.keys())
                 .filter((className) => !sortedClasses.includes(className))
-                .sort((a, b) => a.localeCompare(b));
+                .sort((a, b) => {
+                    if (typeof compareStudentClassNames === 'function') return compareStudentClassNames(a, b);
+                    return a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
+                });
             dailyRevenueRows = [...sortedClasses, ...customClasses].map((className) => {
                 const row = classMap.get(className);
                 return {
@@ -1537,9 +1551,9 @@
             const schoolName = (() => {
                 try {
                     const settings = JSON.parse(localStorage.getItem('eduCore_settings') || '{}') || {};
-                    return String(settings.schoolName || settings.schoolTitle || 'American Lyceum').trim() || 'American Lyceum';
+                    return String(settings.schoolName || settings.schoolTitle || 'American Lyceum International School Sharaqpur Campus').trim() || 'American Lyceum International School Sharaqpur Campus';
                 } catch (_error) {
-                    return 'American Lyceum';
+                    return 'American Lyceum International School Sharaqpur Campus';
                 }
             })();
             const printedAt = new Date().toLocaleString();

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Students - American Lyceum</title>
+    <title>Manage Students - American Lyceum International School Sharaqpur Campus</title>
     <link rel="icon" type="image/png" href="images/logo.jpeg">
     <link rel="stylesheet" href="style.css?v=20260603-american-lyceum-brand">
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
@@ -613,14 +613,16 @@
         .student-name-cell {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.65rem;
             min-width: 0;
         }
 
         .student-name-text {
             min-width: 0;
-            line-height: 1.35;
-            word-break: break-word;
+            line-height: 1.3;
+            white-space: normal;
+            overflow-wrap: normal;
+            word-break: normal;
         }
 
         .cell-compact {
@@ -805,14 +807,15 @@
 
         #studentsTable {
             width: 100% !important;
-            table-layout: auto !important;
+            min-width: 980px !important;
+            table-layout: fixed !important;
             border-collapse: collapse;
             margin: 0;
             padding: 0;
         }
 
         #studentsTable th {
-            padding: 0.65rem 0.6rem !important;
+            padding: 0.7rem 0.75rem !important;
             vertical-align: middle;
             white-space: nowrap !important;
             overflow: hidden !important;
@@ -828,23 +831,23 @@
         }
 
         #studentsTable td {
-            padding: 0.75rem 0.6rem !important;
+            padding: 0.9rem 0.75rem !important;
             vertical-align: middle;
         }
 
         #studentsTable th:nth-child(1),
         #studentsTable td:nth-child(1) {
-            width: 8%;
+            width: 9%;
         }
 
         #studentsTable th:nth-child(2),
         #studentsTable td:nth-child(2) {
-            width: 7%;
+            width: 18%;
         }
 
         #studentsTable th:nth-child(3),
         #studentsTable td:nth-child(3) {
-            width: 18%;
+            width: 14%;
         }
 
         #studentsTable th:nth-child(4),
@@ -854,7 +857,7 @@
 
         #studentsTable th:nth-child(5),
         #studentsTable td:nth-child(5) {
-            width: 9%;
+            width: 11%;
         }
 
         #studentsTable th:nth-child(6),
@@ -864,7 +867,7 @@
 
         #studentsTable th:nth-child(7),
         #studentsTable td:nth-child(7) {
-            width: 10%;
+            width: 8%;
         }
 
         #studentsTable th:nth-child(8),
@@ -874,12 +877,6 @@
 
         #studentsTable th:nth-child(9),
         #studentsTable td:nth-child(9) {
-            width: 8%;
-            text-align: center;
-        }
-
-        #studentsTable th:nth-child(10),
-        #studentsTable td:nth-child(10) {
             width: 11%;
             text-align: center;
         }
@@ -1065,7 +1062,7 @@
     <div class="dashboard-container">
         <aside class="sidebar">
             <div class="logo-section">
-                <img class="sidebar-logo-img" src="images/logo.jpeg" alt="American Lyceum logo">
+                <img class="sidebar-logo-img" src="images/logo.jpeg" alt="American Lyceum International School Sharaqpur Campus logo">
             </div>
 
             <nav class="nav-links">
@@ -1258,8 +1255,8 @@
                             </select>
                         </div>
                         <div class="input-group">
-                            <label>Contact (Phone)</label>
-                            <input type="tel" id="parentPhone" required>
+                            <label>Contact (Phone) <span style="font-weight: 500; color: var(--text-secondary);">(optional)</span></label>
+                            <input type="tel" id="parentPhone" placeholder="Optional">
                         </div>
                         <div class="input-group">
                             <label>Address</label>
@@ -1274,7 +1271,7 @@
                             <input type="tel" id="guardianContact" placeholder="e.g. 03001234567">
                         </div>
                         <div class="input-group">
-                            <label>Email</label>
+                            <label>Email <span style="font-weight: 500; color: var(--text-secondary);">(optional)</span></label>
                             <input type="email" id="studentEmail" placeholder="student@example.com">
                         </div>
                         <div class="input-group">
@@ -1286,10 +1283,6 @@
                                 <option value="Female">Female</option>
                                 <option value="Other">Other</option>
                             </select>
-                        </div>
-                        <div class="input-group">
-                            <label>Roll No</label>
-                            <input type="text" id="rollNo" required>
                         </div>
                         <div class="input-group">
                             <label>Form B No</label>
@@ -1371,7 +1364,6 @@
                     <thead>
                         <tr>
                             <th>Student ID</th>
-                            <th>Roll No</th>
                             <th>Name</th>
                             <th>Father Name</th>
                             <th>DOB</th>
@@ -1443,7 +1435,6 @@
             </div>
             <div class="student-view-grid">
                 <div class="student-view-item"><strong>Student ID</strong><span id="viewStudentCode">-</span></div>
-                <div class="student-view-item"><strong>Roll No</strong><span id="viewStudentRollNo">-</span></div>
                 <div class="student-view-item"><strong>Name</strong><span id="viewStudentName">-</span></div>
                 <div class="student-view-item"><strong>Father Name</strong><span id="viewStudentFatherName">-</span></div>
                 <div class="student-view-item"><strong>Date of Birth</strong><span id="viewStudentDob">-</span></div>

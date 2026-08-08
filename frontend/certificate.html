@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Certificate - American Lyceum</title>
+    <title>Certificate - American Lyceum International School Sharaqpur Campus</title>
     <link rel="stylesheet" href="style.css?v=20260520-login-apexiums-brand">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -17,9 +17,9 @@
         .certificate-grid textarea { min-height:110px; resize:vertical; }
         .certificate-sheet { border:8px double #0f766e; padding:32px; background:#fff; color:#111827; max-width:860px; margin:0 auto; text-align:center; }
         .certificate-head { display:grid; grid-template-columns:96px 1fr 96px; align-items:center; gap:18px; margin-bottom:22px; }
-        .certificate-logo { width:96px; height:96px; object-fit:contain; display:block; margin:0 auto; }
-        .certificate-head h1 { margin:0; font-size:30px; color:#0f766e; }
-        .certificate-head p { margin:6px 0 0; color:#475569; font-weight:700; }
+        .certificate-logo { width:104px; height:104px; object-fit:contain; display:block; margin:0 auto; filter: drop-shadow(0 4px 10px rgba(15, 118, 110, 0.12)); }
+        .certificate-head h1 { margin:0; font-size:30px; color:#0f766e; letter-spacing:.02em; }
+        .certificate-head p { margin:6px 0 0; color:#475569; font-weight:800; letter-spacing:.06em; text-transform:uppercase; }
         .certificate-title { font-size:24px; font-weight:900; text-transform:uppercase; letter-spacing:.08em; margin:22px 0; }
         .certificate-body { font-size:18px; line-height:1.8; margin:20px auto; max-width:680px; }
         .certificate-name { font-size:28px; font-weight:900; color:#0f766e; border-bottom:1px solid #94a3b8; display:inline-block; padding:0 30px 6px; margin:10px 0; }
@@ -36,7 +36,7 @@
 <body>
     <div class="dashboard-container">
         <aside class="sidebar">
-            <div class="logo-section"><img class="sidebar-logo-img" src="images/logo.jpeg" alt="American Lyceum logo"></div>
+            <div class="logo-section"><img class="sidebar-logo-img" src="images/logo.jpeg" alt="American Lyceum International School Sharaqpur Campus logo"></div>
             <nav class="nav-links">
                 <a href="dashboard.html" class="nav-item"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></a>
                 <a href="students.html" class="nav-item"><i data-lucide="users"></i><span>Students</span></a>
@@ -90,15 +90,16 @@
         function renderCertificatePreview() {
             const branding = typeof getBrandingSettings === 'function' ? getBrandingSettings() : {};
             const logoSrc = typeof getBrandingLogoSrc === 'function' ? getBrandingLogoSrc() : 'images/logo.jpeg';
+            const schoolName = 'American Lyceum International School Sharaqpur Campus';
             const dateValue = certificateDate.value ? new Date(certificateDate.value).toLocaleDateString('en-GB') : new Date().toLocaleDateString('en-GB');
             certificatePreview.innerHTML = `
                 <div class="certificate-head">
-                    <img class="certificate-logo" src="${escapeHtml(logoSrc)}" alt="School logo">
+                    <img class="certificate-logo" src="${escapeHtml(logoSrc)}" alt="${escapeHtml(schoolName)} logo">
                     <div>
-                        <h1>${escapeHtml(branding.schoolName || 'American Lyceum')}</h1>
-                        <p>${escapeHtml(branding.schoolTitle || 'American Lyceum')}</p>
+                        <h1>${escapeHtml(schoolName)}</h1>
+                        <p>${escapeHtml(schoolName)}</p>
                     </div>
-                    <img class="certificate-logo" src="${escapeHtml(logoSrc)}" alt="School logo">
+                    <img class="certificate-logo" src="${escapeHtml(logoSrc)}" alt="${escapeHtml(schoolName)} logo">
                 </div>
                 <div class="certificate-title">${escapeHtml(certificateType.value || 'Certificate')}</div>
                 <div class="certificate-body">

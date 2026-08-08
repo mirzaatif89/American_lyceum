@@ -118,17 +118,34 @@ svg {
 }
 
 .brand img {
-    width: 94px;
-    height: 48px;
+    width: 104px;
+    height: 54px;
     object-fit: contain;
     display: block;
 }
 
-.brand span {
-    overflow: hidden;
-    font-size: 1.05rem;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+.brand-copy {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    line-height: 1.05;
+}
+
+.brand-copy strong {
+    color: var(--navy);
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 0;
+    white-space: normal;
+}
+
+.brand-copy small {
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
 }
 
 .nav-links {
@@ -207,11 +224,13 @@ h3 {
 }
 
 .hero h1 {
-    max-width: 650px;
+    max-width: 600px;
     color: #ffffff;
-    font-size: clamp(3rem, 6.4vw, 6rem);
-    line-height: 0.95;
-    overflow-wrap: anywhere;
+    font-size: clamp(2.75rem, 4.5vw, 4.5rem);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    overflow-wrap: normal;
+    word-break: normal;
 }
 
 .hero-copy p:not(.eyebrow) {
@@ -689,9 +708,18 @@ h3 {
         height: 44px;
     }
 
-    .brand span {
+    .brand-copy {
+        gap: 0.08rem;
+    }
+
+    .brand-copy strong {
         max-width: calc(100vw - 136px);
-        font-size: 1rem;
+        font-size: 0.9rem;
+        line-height: 1.05;
+    }
+
+    .brand-copy small {
+        font-size: 0.62rem;
     }
 
     .menu-toggle {
@@ -732,8 +760,9 @@ h3 {
     }
 
     .hero h1 {
-        font-size: clamp(2.35rem, 12vw, 3.2rem);
-        line-height: 1;
+        font-size: clamp(2.15rem, 10vw, 3rem);
+        line-height: 1.04;
+        letter-spacing: -0.025em;
     }
 
     .hero-actions,

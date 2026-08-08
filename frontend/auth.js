@@ -512,9 +512,9 @@ if (window.Capacitor?.isNativePlatform?.()) {
     function getWelcomeSchoolName() {
         try {
             const settings = JSON.parse(localStorage.getItem('eduCore_settings') || '{}') || {};
-            return String(settings.schoolName || settings.schoolTitle || 'American Lyceum').trim() || 'American Lyceum';
+            return String(settings.schoolName || settings.schoolTitle || 'American Lyceum International School Sharaqpur Campus').trim() || 'American Lyceum International School Sharaqpur Campus';
         } catch (_error) {
-            return 'American Lyceum';
+            return 'American Lyceum International School Sharaqpur Campus';
         }
     }
 
@@ -539,7 +539,7 @@ if (window.Capacitor?.isNativePlatform?.()) {
         if (document.getElementById('eduWelcomeOverlay')) return;
 
         const displayName = String(payload.displayName || loggedInUser?.fullName || loggedInUser?.username || 'User').trim() || 'User';
-        const schoolName = String(payload.schoolName || getWelcomeSchoolName()).trim() || 'American Lyceum';
+        const schoolName = String(payload.schoolName || getWelcomeSchoolName()).trim() || 'American Lyceum International School Sharaqpur Campus';
         const logoSrc = 'images/logo.jpeg';
         const overlay = document.createElement('div');
         overlay.id = 'eduWelcomeOverlay';
@@ -1169,7 +1169,7 @@ if (window.Capacitor?.isNativePlatform?.()) {
         return `
             <aside class="sidebar" data-portal-sidebar>
                 <div class="logo-section">
-                    <img class="sidebar-logo-img" src="images/logo.jpeg" alt="American Lyceum logo">
+                    <img class="sidebar-logo-img" src="images/logo.jpeg" alt="American Lyceum International School Sharaqpur Campus logo">
                 </div>
                 <div class="portal-sidebar-user">
                     <strong>${escapeHtml(displayName)}</strong>

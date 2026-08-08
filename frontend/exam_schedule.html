@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exam Schedule - American Lyceum</title>
+    <title>Exam Schedule - American Lyceum International School Sharaqpur Campus</title>
     <link rel="icon" type="image/png" href="images/logo.jpeg">
     <link rel="stylesheet" href="style.css?v=20260603-american-lyceum-brand">
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
@@ -15,7 +15,7 @@
     <div class="dashboard-container">
         <aside class="sidebar">
             <div class="logo-section">
-                <img class="sidebar-logo-img" src="images/logo.jpeg" alt="American Lyceum logo">
+                <img class="sidebar-logo-img" src="images/logo.jpeg" alt="American Lyceum International School Sharaqpur Campus logo">
             </div>
 
             <nav class="nav-links">
@@ -154,7 +154,7 @@
                             <div class="result-form-section">
                                 <h4>Date Sheet Header</h4>
                                 <div class="result-form-fields">
-                                    <label>School Name<input type="text" id="dateSheetSchoolName" value="American Lyceum" placeholder="Enter school name"></label>
+                                    <label>School Name<input type="text" id="dateSheetSchoolName" value="American Lyceum International School Sharaqpur Campus" placeholder="Enter school name"></label>
                                     <label>Exam Title<input type="text" id="dateSheetExamTitle" placeholder="Enter exam title"></label>
                                     <label>Session<input type="text" id="dateSheetSession" placeholder="Enter session"></label>
                                     <label>Target Class / Group<input type="text" id="dateSheetClassGroup" placeholder="Enter class / group"></label>
@@ -228,7 +228,7 @@
                                     <div class="date-sheet-header-top">
                                         <img class="date-sheet-logo" src="images/logo.jpeg" alt="School logo">
                                         <div class="date-sheet-header-text">
-                                            <h2 id="previewDateSheetSchoolName">American Lyceum</h2>
+                                            <h2 id="previewDateSheetSchoolName">American Lyceum International School Sharaqpur Campus</h2>
                                             <p id="previewDateSheetCampus"></p>
                                         </div>
                                     </div>
@@ -284,7 +284,7 @@
                         <div class="result-form-section">
                             <h4>School Header</h4>
                             <div class="result-form-fields">
-                                <label>School Name<input type="text" id="schoolName" value="American Lyceum" placeholder="Enter school name"></label>
+                                <label>School Name<input type="text" id="schoolName" value="American Lyceum International School Sharaqpur Campus" placeholder="Enter school name"></label>
                                 <label>Campus / Branch<input type="text" id="campusName" placeholder="Enter campus / branch"></label>
                                 <label>Contact Line<input type="text" id="schoolContact" placeholder="Enter contact line"></label>
                                 <label>Term Title<input type="text" id="termTitle" placeholder="Enter term title"></label>
@@ -354,7 +354,7 @@
                             <div class="result-card-topbar">
                                 <div class="result-logo-box"><img id="previewLeftLogo" alt="Left school logo"></div>
                                 <div class="result-school-center">
-                                    <h2 id="previewSchoolName">American Lyceum</h2>
+                                    <h2 id="previewSchoolName">American Lyceum International School Sharaqpur Campus</h2>
                                     <p id="previewCampusName"></p>
                                     <p id="previewSchoolContact"></p>
                                 </div>
@@ -1222,7 +1222,7 @@
         let selectedDateSheetFile = null;
 
         function getExamBrandingSettings() {
-            const fallback = { schoolName: 'American Lyceum', schoolTitle: 'American Lyceum', phone: '03174944258', address: 'Main tehsil Road near post office Sharaqpur Sharif district sheikhupura', schoolAddress: 'Main tehsil Road near post office Sharaqpur Sharif district sheikhupura', logoDataUrl: '' };
+            const fallback = { schoolName: 'American Lyceum International School Sharaqpur Campus', schoolTitle: 'American Lyceum International School Sharaqpur Campus', phone: '03174944258', address: 'Main tehsil Road near post office Sharaqpur Sharif district sheikhupura', schoolAddress: 'Main tehsil Road near post office Sharaqpur Sharif district sheikhupura', logoDataUrl: '' };
             try {
                 return { ...fallback, ...((typeof getBrandingSettings === 'function' ? getBrandingSettings() : {}) || {}) };
             } catch (_error) {
@@ -1246,10 +1246,10 @@
 
         function applyExamBrandingDefaults(force = false) {
             const branding = getExamBrandingSettings();
-            const schoolName = 'American Lyceum';
+            const schoolName = 'American Lyceum International School Sharaqpur Campus';
             const contactLine = getExamContactLine();
             const logoSrc = getExamLogoSrc();
-            const legacyNames = ['American Lyceum', 'American Lyceum'];
+            const legacyNames = ['American Lyceum International School Sharaqpur Campus', 'American Lyceum International School Sharaqpur Campus'];
             const dateSheetSchool = document.getElementById('dateSheetSchoolName');
             const resultSchool = document.getElementById('schoolName');
             const contact = document.getElementById('schoolContact');
@@ -1266,7 +1266,7 @@
 
         function forceRefreshResultBrandingFromStorage() {
             const branding = getExamBrandingSettings();
-            const schoolName = 'American Lyceum';
+            const schoolName = 'American Lyceum International School Sharaqpur Campus';
             const contactLine = getExamContactLine();
             const logoSrc = getExamLogoSrc();
 
@@ -1296,14 +1296,14 @@
         }
 
         function isLegacyDemoDateSheetState(saved = {}) {
-            return saved.dateSheetSchoolName === 'American Lyceum' &&
+            return saved.dateSheetSchoolName === 'American Lyceum International School Sharaqpur Campus' &&
                 saved.dateSheetExamTitle === 'Mid Term Examination 2026' &&
                 saved.dateSheetSession === '2025-26' &&
                 saved.dateSheetClassGroup === 'Grade 5 / Section A';
         }
 
         function isLegacyDemoResultState(saved = {}) {
-            return saved.schoolName === 'American Lyceum' &&
+            return saved.schoolName === 'American Lyceum International School Sharaqpur Campus' &&
                 saved.studentName === 'Muhammad Ali' &&
                 saved.fatherName === 'Ahmed Ali' &&
                 saved.termTitle === '3rd Term 2025-26';
@@ -1676,7 +1676,7 @@
             const branding = getExamBrandingSettings();
             const logoSrc = getExamLogoSrc();
             document.querySelectorAll('.date-sheet-logo').forEach((img) => { img.src = logoSrc; });
-            document.getElementById('previewDateSheetSchoolName').textContent = 'American Lyceum';
+            document.getElementById('previewDateSheetSchoolName').textContent = 'American Lyceum International School Sharaqpur Campus';
             document.getElementById('previewDateSheetExamTitle').textContent = document.getElementById('dateSheetExamTitle').value || '';
             document.getElementById('previewDateSheetSession').textContent = document.getElementById('dateSheetSession').value || '';
             document.getElementById('previewDateSheetClassGroup').textContent = document.getElementById('dateSheetClassGroup').value || '';
@@ -1842,7 +1842,7 @@
             const branding = getExamBrandingSettings();
             const logoSrc = getExamLogoSrc();
 
-            document.getElementById('previewSchoolName').textContent = 'American Lyceum';
+            document.getElementById('previewSchoolName').textContent = 'American Lyceum International School Sharaqpur Campus';
             document.getElementById('previewCampusName').textContent = document.getElementById('campusName').value || '';
             document.getElementById('previewSchoolContact').textContent = document.getElementById('schoolContact').value || '';
             document.getElementById('previewTermTitle').textContent = document.getElementById('termTitle').value || '';

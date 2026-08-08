@@ -3,14 +3,14 @@ const { readStore, upsertRecord } = require('../_lib/mobileStore');
 
 const defaultAboutSoftware = {
     id: 'ABOUT-SOFTWARE',
-    appName: 'American Lyceum',
-    schoolName: 'American Lyceum School',
+    appName: 'American Lyceum International School Sharaqpur Campus',
+    schoolName: 'American Lyceum International School Sharaqpur Campus',
     website: process.env.SCHOOL_WEBSITE || 'https://americanlyceum.com/',
     supportEmail: process.env.SMTP_FROM_EMAIL || 'americanlyceumschoolsharaqpurc@gmail.com',
     supportPhone: '03174944258',
     schoolAddress: 'Main tehsil Road near post office Sharaqpur Sharif district sheikhupura',
     principalName: 'Mahmood ul Hassan',
-    description: 'Student and teacher portal APIs for American Lyceum School.',
+    description: 'Student and teacher portal APIs for American Lyceum International School Sharaqpur Campus.',
     version: '1.0.0'
 };
 

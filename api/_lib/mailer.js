@@ -7,7 +7,7 @@ function getSmtpConfig() {
     const user = String(process.env.SMTP_USER || '').trim();
     const pass = String(process.env.SMTP_PASS || process.env.SMTP_PSAS || '').trim();
     const fromEmail = String(process.env.SMTP_FROM_EMAIL || user || '').trim();
-    const fromName = String(process.env.SMTP_FROM_NAME || 'American Lyceum School').trim();
+    const fromName = String(process.env.SMTP_FROM_NAME || 'American Lyceum International School Sharaqpur Campus').trim();
 
     return {
         host,

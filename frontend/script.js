@@ -51,9 +51,22 @@ const DASHBOARD_CAMPUS_FILTER_KEY = 'eduCore_dashboard_campus_filter';
 const GLOBAL_CAMPUS_FILTER_KEY = DASHBOARD_CAMPUS_FILTER_KEY;
 const DEFAULT_CAMPUS_NAMES = ['Main Campus'];
 const DEFAULT_STUDENT_CLASS_ORDER = [
-    'Play Group', 'Nursery', 'Prep',
-    'Class 1', 'Class 2', 'Class 3', 'Class 4', 'Class 5',
-    'Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10'
+    'Montessori Junior Blue',
+    'Montessori Junior Red',
+    'Montessori Junior Green',
+    'Montessori Senior',
+    'Montessori Advance',
+    'Grade 1st',
+    'Grade 2nd',
+    'Grade 3rd',
+    'Grade 4th',
+    'Grade 5th',
+    'Grade 6th',
+    'Grade 7th',
+    'Grade 8th',
+    'Grade 9th',
+    'Grade 10th',
+    "O Level's"
 ];
 let studentQuickFilterBranchCampuses = [];
 let studentColumnSearchFilter = null;
@@ -1379,8 +1392,8 @@ function escapeHtml(value) {
 
 function getBrandingSettings() {
     const fallback = {
-        schoolName: 'American Lyceum',
-        schoolTitle: 'American Lyceum',
+        schoolName: 'American Lyceum International School Sharaqpur Campus',
+        schoolTitle: 'American Lyceum International School Sharaqpur Campus',
         session: '',
         phone: '03174944258',
         address: 'Main tehsil Road near post office Sharaqpur Sharif district sheikhupura',
@@ -2388,12 +2401,12 @@ function queueWelcomeAnimationForNextPage(user) {
     try {
         const displayName = user?.fullName || user?.username || user?.role || 'User';
         const role = user?.role || 'User';
-        let schoolName = 'American Lyceum';
+        let schoolName = 'American Lyceum International School Sharaqpur Campus';
         try {
             const settings = JSON.parse(localStorage.getItem('eduCore_settings') || '{}') || {};
             schoolName = String(settings.schoolName || settings.schoolTitle || schoolName).trim() || schoolName;
         } catch (_error) {
-            schoolName = 'American Lyceum';
+            schoolName = 'American Lyceum International School Sharaqpur Campus';
         }
         sessionStorage.setItem(
             EDUCORE_WELCOME_SESSION_KEY,
@@ -2439,11 +2452,11 @@ function showWelcomeAnimationIfNeeded() {
     const schoolName = String(payload.schoolName || (() => {
         try {
             const settings = JSON.parse(localStorage.getItem('eduCore_settings') || '{}') || {};
-            return settings.schoolName || settings.schoolTitle || 'American Lyceum';
+            return settings.schoolName || settings.schoolTitle || 'American Lyceum International School Sharaqpur Campus';
         } catch (_error) {
-            return 'American Lyceum';
+            return 'American Lyceum International School Sharaqpur Campus';
         }
-    })()).trim() || 'American Lyceum';
+    })()).trim() || 'American Lyceum International School Sharaqpur Campus';
     const escape = typeof escapeSessionText === 'function' ? escapeSessionText : (value) => String(value ?? '');
 
     overlay.innerHTML = `
@@ -5260,8 +5273,7 @@ async function validateStudentRequiredFields() {
         ['classGrade', 'Class'],
         ['campusName', 'Campus'],
         ['parentPhone', 'Contact Phone'],
-        ['gender', 'Gender'],
-        ['rollNo', 'Roll No']
+        ['gender', 'Gender']
     ];
 
     const missingField = requiredFields.find(([fieldId]) => {
@@ -5838,9 +5850,7 @@ async function handleStudentFormSubmit(e) {
         ['studentDob', 'Date of Birth is required.'],
         ['classGrade', 'Class is required.'],
         ['campusName', 'Campus Name is required.'],
-        ['parentPhone', 'Contact Phone is required.'],
-        ['gender', 'Gender is required.'],
-        ['rollNo', 'Roll No is required.']
+        ['gender', 'Gender is required.']
     ];
 
     for (const [fieldId, message] of requiredFields) {
@@ -5861,7 +5871,9 @@ async function handleStudentFormSubmit(e) {
 
     if (!studentPasswordInput) {
         const digits = parentPhone.replace(/\D/g, '');
-        studentPasswordInput = `Student${digits.length >= 4 ? digits.slice(-4) : '123'}`;
+        const codeSeed = String(studentCode || usernameInput || '').replace(/\D/g, '');
+        const fallbackSeed = codeSeed || digits;
+        studentPasswordInput = `Student${fallbackSeed.length >= 4 ? fallbackSeed.slice(-4) : '123'}`;
         document.getElementById('studentPassword').value = studentPasswordInput;
     }
 
@@ -5943,7 +5955,6 @@ async function handleStudentFormSubmit(e) {
         guardianContact,
         email: studentEmailInput,
         gender: document.getElementById('gender').value,
-        rollNo: document.getElementById('rollNo').value.trim(),
         formB: document.getElementById('formB').value.trim(),
         fingerprintData: document.getElementById('studentFingerprintData') ? document.getElementById('studentFingerprintData').value.trim() : (existingStudent?.fingerprintData || ''),
         familyId,
@@ -6107,9 +6118,9 @@ function printStudentAdmissionFormFromEncoded(encodedPayload) {
 function getEmailSchoolName() {
     try {
         const branding = typeof getBrandingSettings === 'function' ? getBrandingSettings() : {};
-        return String(branding.schoolName || branding.schoolTitle || 'American Lyceum').trim() || 'American Lyceum';
+        return String(branding.schoolName || branding.schoolTitle || 'American Lyceum International School Sharaqpur Campus').trim() || 'American Lyceum International School Sharaqpur Campus';
     } catch (_error) {
-        return 'American Lyceum';
+        return 'American Lyceum International School Sharaqpur Campus';
     }
 }
 
@@ -6334,14 +6345,13 @@ function handleTeacherActionSelect(selectElement, encodedPayload, teacherId) {
 function viewStudent(student) {
     const modal = document.getElementById('studentViewModal');
     if (!modal) {
-        const compactDetails = `ID: ${student.studentCode || '-'} | Roll: ${student.rollNo || '-'} | Name: ${student.fullName || '-'} | Class: ${student.classGrade || '-'} | Campus: ${student.campusName || '-'}`;
+        const compactDetails = `ID: ${student.studentCode || '-'} | Name: ${student.fullName || '-'} | Class: ${student.classGrade || '-'} | Campus: ${student.campusName || '-'}`;
         showAppAlert(compactDetails, 'Student Details');
         return;
     }
 
     const detailsMap = {
         viewStudentCode: student.studentCode || '-',
-        viewStudentRollNo: student.rollNo || '-',
         viewStudentName: student.fullName || '-',
         viewStudentFatherName: student.fatherName || '-',
         viewStudentDob: formatDateForDisplay(student.dob),
@@ -6572,31 +6582,108 @@ function getStudentClassSortRank(className) {
         pg: 0,
         playgroup: 0,
         'play group': 0,
-        kg1: 1,
+        'montessori junior blue': 0,
         nursery: 1,
         nursary: 1,
+        nur: 1,
+        'montessori junior red': 1,
         kg2: 2,
         prep: 2,
-        preschool: 2
+        preschool: 2,
+        pre: 2,
+        'montessori junior green': 2,
+        'montessori senior': 3,
+        senior: 3,
+        'montessori advance': 4,
+        advance: 4,
+        'grade 1st': 5,
+        'grade 1': 5,
+        'class 1': 5,
+        'class one': 5,
+        '1': 5,
+        one: 5,
+        '1st': 5,
+        'grade 2nd': 6,
+        'grade 2': 6,
+        'class 2': 6,
+        'class two': 6,
+        '2': 6,
+        two: 6,
+        '2nd': 6,
+        'grade 3rd': 7,
+        'grade 3': 7,
+        'class 3': 7,
+        'class three': 7,
+        '3': 7,
+        three: 7,
+        '3rd': 7,
+        'grade 4th': 8,
+        'grade 4': 8,
+        'class 4': 8,
+        'class four': 8,
+        '4': 8,
+        four: 8,
+        '4th': 8,
+        'grade 5th': 9,
+        'grade 5': 9,
+        'class 5': 9,
+        'class five': 9,
+        '5': 9,
+        five: 9,
+        '5th': 9,
+        'grade 6th': 10,
+        'grade 6': 10,
+        'class 6': 10,
+        'class six': 10,
+        '6': 10,
+        six: 10,
+        '6th': 10,
+        'grade 7th': 11,
+        'grade 7': 11,
+        'class 7': 11,
+        'class seven': 11,
+        '7': 11,
+        seven: 11,
+        '7th': 11,
+        'grade 8th': 12,
+        'grade 8': 12,
+        'class 8': 12,
+        'class eight': 12,
+        '8': 12,
+        eight: 12,
+        '8th': 12,
+        'grade 9th': 13,
+        'grade 9': 13,
+        'class 9': 13,
+        'class nine': 13,
+        '9': 13,
+        nine: 13,
+        '9th': 13,
+        'grade 10th': 14,
+        'grade 10': 14,
+        'class 10': 14,
+        'class ten': 14,
+        '10': 14,
+        ten: 14,
+        '10th': 14,
+        "o level": 15,
+        "o levels": 15,
+        "o level's": 15,
+        olevel: 15,
+        "o-level": 15
     };
     if (Object.prototype.hasOwnProperty.call(aliasRanks, normalized)) return aliasRanks[normalized];
 
-    const wordNumbers = {
-        one: 1,
-        two: 2,
-        three: 3,
-        four: 4,
-        five: 5,
-        six: 6,
-        seven: 7,
-        eight: 8,
-        nine: 9,
-        ten: 10
-    };
-    const classMatch = normalized.match(/^(?:class|grade)\s*(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\b/);
+    const classMatch = normalized.match(/^(?:class|grade)\s*(\d{1,2})(?:st|nd|rd|th)?\b/);
     if (classMatch) {
-        const classNumber = wordNumbers[classMatch[1]] || Number.parseInt(classMatch[1], 10);
-        if (Number.isFinite(classNumber)) return 2 + classNumber;
+        const classNumber = Number.parseInt(classMatch[1], 10);
+        if (Number.isFinite(classNumber) && classNumber >= 1 && classNumber <= 10) return 4 + classNumber;
+    }
+
+    const bareNumberMatch = normalized.match(/^(\d{1,2})(?:st|nd|rd|th)?\b/);
+    if (bareNumberMatch) {
+        const classNumber = Number.parseInt(bareNumberMatch[1], 10);
+        if (Number.isFinite(classNumber) && classNumber >= 1 && classNumber <= 10) return 4 + classNumber;
     }
 
     return 1000;
@@ -6963,7 +7050,6 @@ function renderStudents(term = '') {
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td><b>${s.studentCode || '-'}</b></td>
-                <td><b>${s.rollNo}</b></td>
                 <td><div class="student-name-cell">
                     <div class="student-avatar">${buildStudentAvatarMarkup(s)}</div>
                     <div class="student-name-text">${s.fullName}</div>
@@ -7474,7 +7560,7 @@ function printStudentsList() {
                         <td>${escapeHtml(s.fullName || '-')}</td>
                         <td>${escapeHtml(s.fatherName || '-')}</td>
                         <td>${escapeHtml(s.parentPhone || '-')}</td>
-                        <td>${escapeHtml(s.rollNo || '-')}</td>
+                        <td>${escapeHtml(s.studentCode || '-')}</td>
                     </tr>
                 `;
             }
@@ -7483,7 +7569,6 @@ function printStudentsList() {
                 <tr>
                     <td class="num">${idx + 1}</td>
                     <td>${escapeHtml(s.studentCode || '-')}</td>
-                    <td>${escapeHtml(s.rollNo || '-')}</td>
                     <td>${escapeHtml(s.fullName || '-')}</td>
                     <td>${escapeHtml(s.fatherName || '-')}</td>
                     <td>${escapeHtml(s.parentPhone || '-')}</td>
@@ -7495,7 +7580,7 @@ function printStudentsList() {
                 </tr>
             `;
         }).join('')
-        : `<tr><td colspan="${printMode === 'polio' ? 6 : (printMode === 'outer' ? 5 : 11)}" class="empty">No students match the current filter.</td></tr>`;
+        : `<tr><td colspan="${printMode === 'polio' ? 6 : (printMode === 'outer' ? 5 : 10)}" class="empty">No students match the current filter.</td></tr>`;
 
     const html = `
         <!doctype html>
@@ -7547,14 +7632,13 @@ function printStudentsList() {
                             <th>Student Name</th>
                             <th>Father Name</th>
                             <th>Contact No</th>
-                            <th style="width:70px;">Roll No</th>
+                            <th style="width:70px;">Student ID</th>
                         </tr>
                     `
         : `
                         <tr>
                             <th style="width:30px;">#</th>
                             <th class="nowrap">Student ID</th>
-                            <th class="nowrap">Roll No</th>
                             <th>Student Name</th>
                             <th>Father Name</th>
                             <th class="nowrap">Contact No</th>
@@ -7601,7 +7685,7 @@ function printStudentAdmissionForm(student = {}) {
     const legacyPlaceholderNames = new Set(['harward school', 'harvard school']);
     const schoolName = rawSchoolName && !legacyPlaceholderNames.has(rawSchoolName.toLowerCase())
         ? rawSchoolName
-        : 'American Lyceum';
+        : 'American Lyceum International School Sharaqpur Campus';
     const schoolLogo = new URL('images/logo.jpeg', window.location.href).href;
     const printedAt = new Date().toLocaleString();
     const statusLabel = getStudentStatusLabel(student);
@@ -7620,7 +7704,6 @@ function printStudentAdmissionForm(student = {}) {
 
     const detailRows = [
         ['Student ID', student.studentCode],
-        ['Roll No', student.rollNo],
         ['Full Name', student.fullName],
         ["Father's Name", student.fatherName],
         ['Date of Birth', formatDateSafe(student.dob), true],
@@ -7884,7 +7967,6 @@ function editStudent(s) {
     if (document.getElementById('guardianContact')) document.getElementById('guardianContact').value = s.guardianContact || '';
     if (document.getElementById('studentEmail')) document.getElementById('studentEmail').value = s.email || '';
     document.getElementById('gender').value = s.gender || '';
-    document.getElementById('rollNo').value = s.rollNo;
     document.getElementById('formB').value = s.formB || '';
     if (document.getElementById('studentFingerprintData')) document.getElementById('studentFingerprintData').value = s.fingerprintData || '';
     if (document.getElementById('studentFamilyName')) document.getElementById('studentFamilyName').value = s.familyName || '';
